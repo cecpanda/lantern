@@ -174,6 +174,8 @@ REST_FRAMEWORK = {
     #     )
     'DATETIME_FORMAT': 'iso-8601',
     'DATETIME_INPUT_FORMATS': ('iso-8601',),
+    'UPLOADED_FILES_USE_URL': True,
+    'UPLOADED_FILES_USE_PREFIX': 'http://10.53.141.255',
     }
 
 JWT_AUTH = {

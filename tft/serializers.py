@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from rest_framework.settings import api_settings
 from rest_framework import status
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
@@ -1044,7 +1045,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def get_reports(self, obj):
         return {
-            pathlib.PurePath(report.file.name).name: self.context['request'].build_absolute_uri(report.file.url) for report in obj.reports.all()
+            pathlib.PurePath(report.file.name).name: self.context['request'].build_absolute_uri(api_settings.UPLOADED_FILES_USE_PREFIX + report.file.url) for report in obj.reports.all()
         }
 
     def to_representation(self, instance):
