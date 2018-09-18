@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'extra_apps'))
 SECRET_KEY = '8bi*l9+epvlwxn+i&np-1^+#xfdlo4d^!-5y8#x=g0+vwoggmw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -147,6 +148,8 @@ STATICFILES_DIRS = (
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_PREFLIGHT_MAX_AGE = 1
+
 
 AUTH_USER_MODEL = 'account.User'
 #
@@ -175,7 +178,7 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': 'iso-8601',
     'DATETIME_INPUT_FORMATS': ('iso-8601',),
     'UPLOADED_FILES_USE_URL': True,
-    'UPLOADED_FILES_USE_PREFIX': 'http://10.53.141.255',
+    # 'UPLOADED_FILES_USE_PREFIX': 'http://10.53.141.255',
     }
 
 JWT_AUTH = {
