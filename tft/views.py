@@ -1,5 +1,8 @@
+import json
+
 from django.conf import settings
 from django.db.models import Q
+from django.contrib.auth.models import Group
 from django.core.exceptions import FieldError
 from rest_framework.response import Response
 from rest_framework import status
@@ -413,3 +416,95 @@ class OrderViewSet(ListModelMixin,
     filter_class = OrderFilter
     search_fields = ('$id', '$user__username', '$user__realname')
     ordering_fields = ('created',)
+
+    @action(methods=['get'], detail=False, url_path='summary', url_name='summary')
+    def summary(self, request):
+        '''
+        [{'cvd': ['停机单数', ‘停机审核中’, '停机拒签', ‘停机完成’,
+                  '已复机', '复机完成率', '其他（复机审核中、复机拒签、部分复机）']}, ...]
+        '''
+        which = request.query_params.get('which')
+        if not which in ['group', 'charge_group']:
+            return Response({'key': '请提供适合的 which 参数（group & charge_group）'}, status=status.HTTP_400_BAD_REQUEST)
+
+        groups = Group.objects.all()
+
+        sum_list = []
+        audits_list = []
+        rejects_list = []
+        closed_list = []
+        finished_list = []
+        others_list = []
+        data = {
+            'groups': [],
+            'table': [],
+            # 'chart': {'sum': [], 'audits': [], 'rejects': [], 'closed': [], 'finished': [], 'others': []}
+            'chart': []
+        }
+
+        if which == 'group':
+            for group in groups:
+                sum = Order.objects.filter(group=group).count()
+                audits = Order.objects.filter(group=group, status__in=['1', '2']).count()
+                rejects = Order.objects.filter(group=group, status='3').count()
+                closed = Order.objects.filter(group=group, status='4').count()
+                finished = Order.objects.filter(group=group, status='9').count()
+                # try:
+                #     rate = '{:.2%}'.format(finished / sum)
+                # except ZeroDivisionError as e:
+                #     rate = '{:.2%}'.format(0)
+                others = Order.objects.filter(group=group, status__in=['0', '5', '6', '7', '8']).count()
+
+                data['groups'].append(group.name)
+                data['table'].append({
+                    'group': group.name,
+                    'sum': sum,
+                    'audits': audits,
+                    'rejects': rejects,
+                    'closed': closed,
+                    'finished': finished,
+                    'others': others
+                })
+                sum_list.append(sum)
+                audits_list.append(audits)
+                rejects_list.append(rejects)
+                closed_list.append(closed)
+                finished_list.append(finished)
+                others_list.append(others)
+        elif which == 'charge_group':
+            for group in groups:
+                sum = Order.objects.filter(charge_group=group).count()
+                audits = Order.objects.filter(charge_group=group, status__in=['1', '2']).count()
+                rejects = Order.objects.filter(charge_group=group, status='3').count()
+                closed = Order.objects.filter(charge_group=group, status='4').count()
+                finished = Order.objects.filter(charge_group=group, status='9').count()
+                # try:
+                #     rate = '{:.2%}'.format(finished / sum)
+                # except ZeroDivisionError as e:
+                #     rate = '{:.2%}'.format(0)
+                others = Order.objects.filter(charge_group=group, status__in=['0', '5', '6', '7', '8']).count()
+                data['groups'].append(group.name)
+                data['table'].append({
+                    'group': group.name,
+                    'sum': sum,
+                    'audits': audits,
+                    'rejects': rejects,
+                    'closed': closed,
+                    'finished': finished,
+                    'others': others
+                })
+                sum_list.append(sum)
+                audits_list.append(audits)
+                rejects_list.append(rejects)
+                closed_list.append(closed)
+                finished_list.append(finished)
+                others_list.append(others)
+
+        data['chart'].append({'name': '停机单数', 'type': 'bar', 'data': sum_list})
+        data['chart'].append({'name': '停机审核中', 'type': 'bar', 'stack': 'a', 'data': audits_list})
+        data['chart'].append({'name': '停机拒签', 'type': 'bar', 'stack': 'a', 'data': rejects_list})
+        data['chart'].append({'name': '停机完成', 'type': 'bar', 'stack': 'a', 'data': closed_list})
+        data['chart'].append({'name': '已复机', 'type': 'bar', 'stack': 'a', 'data': finished_list})
+        data['chart'].append({'name': '其他', 'type': 'bar', 'stack': 'a', 'data': others_list})
+
+        return Response(data=data)

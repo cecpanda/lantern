@@ -24,6 +24,7 @@ class User(AbstractUser):
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
+        ordering = ('username',)
 
     def get_absolute_url(self):
         return reverse('account:user-detail', args=[self.username])
