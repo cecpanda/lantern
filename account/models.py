@@ -16,7 +16,7 @@ class User(AbstractUser):
     mobile = models.CharField("手机", max_length=11, blank=True, null=True)
     phone = models.CharField('电话', max_length=6, blank=True, null=True)
     avatar = models.ImageField('头像', upload_to='avatars/%Y/%m', blank=True,
-                               null=True, default="avatars/default.png")
+                               null=True, default="avatars/default.jpeg")
     gender = models.CharField("性别", max_length=1, choices=GENDER_CHOICES,
                               default="M")
     following = models.ManyToManyField('self', through='Follow', related_name='followers', symmetrical=False)

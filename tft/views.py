@@ -414,7 +414,11 @@ class OrderViewSet(ListModelMixin,
     pagination_class = OrderPagination
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_class = OrderFilter
-    search_fields = ('$id', '$user__username', '$user__realname')
+    search_fields = ('$id', '$user__username', '$user__realname',
+                     '$mod_user__username', '$mod_user__realname',
+                     '$found_step', '$eq', '$kind', '$step',
+                     '$reason', '$users', '$charge_users',
+                     '$desc', '$condition')
     ordering_fields = ('created',)
 
     @action(methods=['get'], detail=False, url_path='summary', url_name='summary')
