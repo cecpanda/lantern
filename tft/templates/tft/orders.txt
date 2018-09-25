@@ -1,0 +1,2 @@
+{% for row in data %}{% for item in row %}{{ item|addslashes }},{% endfor %}
+{% endfor %}

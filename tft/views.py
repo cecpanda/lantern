@@ -1,9 +1,12 @@
 import json
 
+from django.shortcuts import render
+from django.http import HttpResponse
 from django.conf import settings
 from django.db.models import Q
 from django.contrib.auth.models import Group
 from django.core.exceptions import FieldError
+from django.template import Context, loader
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, ListModelMixin, DestroyModelMixin
@@ -512,3 +515,27 @@ class OrderViewSet(ListModelMixin,
         data['chart'].append({'name': '其他', 'type': 'bar', 'stack': 'a', 'data': others_list})
 
         return Response(data=data)
+
+    @action(methods=['GET'], detail=False, url_path='export', url_name='export')
+    def export(self, request):
+        suffix = request.query_params.get('suffix', '')
+
+        if suffix.upper() == 'CSV':
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="orders.csv"'
+
+            t = loader.get_template('tft/orders.txt')
+            data = (
+                ('a', 'b', 'c'),
+                (1, 2, 3)
+            )
+            context = {'data': data}
+            response.write(t.render(context))
+            return response
+        elif suffix.upper() == 'xlsx':
+            pass
+        else:
+            return Response({'detail': '请传入format参数: csv 或 xlsx'})
+
+    def get_row(self, id):
+        pass
