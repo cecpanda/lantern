@@ -1,0 +1,3 @@
+{% load csv_tags %}
+{% for row in data %}{{ row.remarks }}
+{% endfor %}

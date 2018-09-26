@@ -1,7 +1,11 @@
+import os
 import json
+import string
+import random
 
+from django.conf import settings
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.db.models import Q
 from django.contrib.auth.models import Group
@@ -9,6 +13,8 @@ from django.core.exceptions import FieldError
 from django.template import Context, loader
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.settings import api_settings
+from rest_framework.reverse import reverse
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, RetrieveModelMixin, ListModelMixin, DestroyModelMixin
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.authentication import SessionAuthentication
@@ -28,7 +34,8 @@ from .serializers import StartOrderSerializer, RetrieveStartOrderSerializer, \
                          ListRecoverOrderSerializer, RecoverOrderSerializer, UpdateRecoverOrderSerializer, \
                          QcRecoverAuditSerializer, ProductRecoverAuditSerializer, \
                          RemarkSerializer, CreateRemarkSerializer, \
-                         OrderSerializer, ShortcutSerializer
+                         OrderSerializer, ShortcutSerializer, \
+                         ExportSerializer
 
 from .utils import IsSameGroup, RecoverOrderIsSameGroup, IsMFGUser, OrderPagination, OrderFilter, RecoverOrderFilter
 
@@ -424,7 +431,12 @@ class OrderViewSet(ListModelMixin,
                      '$desc', '$condition')
     ordering_fields = ('created',)
 
-    @action(methods=['get'], detail=False, url_path='summary', url_name='summary')
+    def get_serializer_class(self):
+        if self.action == 'export':
+            return ExportSerializer
+        return self.serializer_class
+
+    @action(methods=['GET'], detail=False, url_path='summary', url_name='summary')
     def summary(self, request):
         '''
         [{'cvd': ['停机单数', ‘停机审核中’, '停机拒签', ‘停机完成’,
@@ -516,26 +528,57 @@ class OrderViewSet(ListModelMixin,
 
         return Response(data=data)
 
-    @action(methods=['GET'], detail=False, url_path='export', url_name='export')
+    @action(methods=['POST'], detail=False, url_path='export', url_name='export')
     def export(self, request):
-        suffix = request.query_params.get('suffix', '')
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if suffix.upper() == 'CSV':
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="orders.csv"'
+        ids = serializer.validated_data.get('ids')
+        format = serializer.validated_data.get('format')
+        queryset = Order.objects.filter(id__in=ids)
 
-            t = loader.get_template('tft/orders.txt')
-            data = (
-                ('a', 'b', 'c'),
-                (1, 2, 3)
-            )
-            context = {'data': data}
-            response.write(t.render(context))
-            return response
-        elif suffix.upper() == 'xlsx':
+        s = OrderSerializer(queryset, many=True, context={'request': request})
+        data = [dict(row) for row in s.data]
+
+        # return HttpResponseRedirect(reverse('tft:order-exporting'))
+
+        return self.exporting(request, data, format)
+
+    # @action(methods=['GET'], detail=False, url_path='exporting', url_name='exporting')
+    def exporting(self, request, data, format='csv'):
+        if format == 'xlsx':
             pass
-        else:
-            return Response({'detail': '请传入format参数: csv 或 xlsx'})
 
-    def get_row(self, id):
-        pass
+        else:
+            # 前端使用下面的代码保存
+            '''
+            let blob = new Blob([res.data], {type: 'text/plain;charset=utf-8'})
+            FileSaver.saveAs(blob, 'orders.csv')
+            '''
+            # response = HttpResponse(content_type='text/csv')
+            # response['Content-Disposition'] = 'attachment; filename="orders.csv"'
+            #
+            # t = loader.get_template('tft/orders.txt')
+            # context = {'data': data}
+            # response.write(t.render(context))
+            #
+            # return response
+
+            # 或者在服务端生成 csv，将连接发送给前端
+            t = loader.get_template('tft/orders.txt')
+
+
+            context = {'data': data}
+
+            txt = t.render(context)
+
+            random_string = ''.join(random.sample(string.ascii_letters + string.digits, 7))
+            name = random_string + '.csv'
+
+            file = os.path.join(settings.MEDIA_ROOT, 'csv', name)
+
+            with open(file, 'w') as f:
+                f.write(txt)
+
+            url = request.build_absolute_uri(api_settings.UPLOADED_FILES_USE_PREFIX + settings.MEDIA_URL + 'csv/' + name)
+            return Response({'url': url})

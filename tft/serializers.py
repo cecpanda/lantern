@@ -1087,3 +1087,8 @@ class ListRecoverOrderSerializer(serializers.ModelSerializer):
         if not ret.get('mod_user'):
             ret['mod_user'] = {}
         return ret
+
+
+class ExportSerializer(serializers.Serializer):
+    ids = serializers.ListField(label='开单编号', child=serializers.CharField(), min_length=1)
+    format = serializers.ChoiceField(label='格式', choices=('csv', 'xlsx'))
