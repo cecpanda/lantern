@@ -119,3 +119,7 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+# lantern
+media/csv/
+media/xlsx/

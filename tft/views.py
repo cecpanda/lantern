@@ -454,11 +454,30 @@ class OrderViewSet(ListModelMixin,
         closed_list = []
         finished_list = []
         others_list = []
+        """
+        groups: ['CVD', 'MFG', 'PVD',]
+        table: [
+          {'group': 'CVD', 'sum': 13, 'audits': 10, 'rejects': 0, 'closed': 0, 'finished': 0, 'others': 3}, 
+          {'group': 'MFG', 'sum': 4, 'audits': 3, 'rejects': 0, 'closed': 0, 'finished': 0, 'others': 1}, 
+          {'group': 'PVD', 'sum': 3, 'audits': 2, 'rejects': 0, 'closed': 0, 'finished': 1, 'others': 0}, 
+        ]
+        
+        bar: [
+          {'name': '停机单数', 'type': 'bar', 'data': [13, 4, 3, 9, 1, 0, 0, 0]}, 
+          {'name': '停机审核中', 'type': 'bar', 'stack': 'a', 'data': [10, 3, 2, 9, 1, 0, 0, 0]},
+          {'name': '停机拒签', 'type': 'bar', 'stack': 'a', 'data': [0, 0, 0, 0, 0, 0, 0, 0]}, 
+        ]
+        
+        pie: [
+          {'value': 13, 'name': 'CVD'}, 
+          {'value': 4, 'name': 'MFG'}, 
+        ]
+        """
         data = {
             'groups': [],
             'table': [],
-            # 'chart': {'sum': [], 'audits': [], 'rejects': [], 'closed': [], 'finished': [], 'others': []}
-            'chart': []
+            'bar': [],
+            'pie': []
         }
 
         if which == 'group':
@@ -484,6 +503,9 @@ class OrderViewSet(ListModelMixin,
                     'finished': finished,
                     'others': others
                 })
+                if sum > 0:
+                    data['pie'].append({'value': sum, 'name': group.name})
+
                 sum_list.append(sum)
                 audits_list.append(audits)
                 rejects_list.append(rejects)
@@ -512,6 +534,9 @@ class OrderViewSet(ListModelMixin,
                     'finished': finished,
                     'others': others
                 })
+                if sum > 0:
+                    data['pie'].append({'value': sum, 'name': group.name})
+
                 sum_list.append(sum)
                 audits_list.append(audits)
                 rejects_list.append(rejects)
@@ -519,12 +544,12 @@ class OrderViewSet(ListModelMixin,
                 finished_list.append(finished)
                 others_list.append(others)
 
-        data['chart'].append({'name': '停机单数', 'type': 'bar', 'data': sum_list})
-        data['chart'].append({'name': '停机审核中', 'type': 'bar', 'stack': 'a', 'data': audits_list})
-        data['chart'].append({'name': '停机拒签', 'type': 'bar', 'stack': 'a', 'data': rejects_list})
-        data['chart'].append({'name': '停机完成', 'type': 'bar', 'stack': 'a', 'data': closed_list})
-        data['chart'].append({'name': '已复机', 'type': 'bar', 'stack': 'a', 'data': finished_list})
-        data['chart'].append({'name': '其他', 'type': 'bar', 'stack': 'a', 'data': others_list})
+        data['bar'].append({'name': '停机单数', 'type': 'bar', 'data': sum_list})
+        data['bar'].append({'name': '停机审核中', 'type': 'bar', 'stack': 'a', 'data': audits_list})
+        data['bar'].append({'name': '停机拒签', 'type': 'bar', 'stack': 'a', 'data': rejects_list})
+        data['bar'].append({'name': '停机完成', 'type': 'bar', 'stack': 'a', 'data': closed_list})
+        data['bar'].append({'name': '已复机', 'type': 'bar', 'stack': 'a', 'data': finished_list})
+        data['bar'].append({'name': '其他', 'type': 'bar', 'stack': 'a', 'data': others_list})
 
         return Response(data=data)
 
@@ -536,6 +561,59 @@ class OrderViewSet(ListModelMixin,
         ids = serializer.validated_data.get('ids')
         format = serializer.validated_data.get('format')
         queryset = Order.objects.filter(id__in=ids)
+
+        if format == 'chart':
+            groups = set()
+            sum_list = []
+            audits_list = []
+            rejects_list = []
+            closed_list = []
+            finished_list = []
+            others_list = []
+            data = {
+                'groups': [],
+                'table': [],
+                'bar': [],
+                'pie': []
+            }
+            for order in queryset:
+                groups.add(order.charge_group)
+
+            for group in groups:
+                sum = queryset.filter(charge_group=group).count()
+                audits = queryset.filter(charge_group=group, status__in=['1', '2']).count()
+                rejects = queryset.filter(charge_group=group, status='3').count()
+                closed = queryset.filter(charge_group=group, status='4').count()
+                finished = queryset.filter(charge_group=group, status='9').count()
+                others = queryset.filter(charge_group=group, status__in=['0', '5', '6', '7', '8']).count()
+                data['groups'].append(group.name)
+                data['table'].append({
+                    'group': group.name,
+                    'sum': sum,
+                    'audits': audits,
+                    'rejects': rejects,
+                    'closed': closed,
+                    'finished': finished,
+                    'others': others
+                })
+                if sum > 0:
+                    data['pie'].append({'value': sum, 'name': group.name})
+
+                sum_list.append(sum)
+                audits_list.append(audits)
+                rejects_list.append(rejects)
+                closed_list.append(closed)
+                finished_list.append(finished)
+                others_list.append(others)
+
+            data['bar'].append({'name': '停机单数', 'type': 'bar', 'data': sum_list})
+            data['bar'].append({'name': '停机审核中', 'type': 'bar', 'stack': 'a', 'data': audits_list})
+            data['bar'].append({'name': '停机拒签', 'type': 'bar', 'stack': 'a', 'data': rejects_list})
+            data['bar'].append({'name': '停机完成', 'type': 'bar', 'stack': 'a', 'data': closed_list})
+            data['bar'].append({'name': '已复机', 'type': 'bar', 'stack': 'a', 'data': finished_list})
+            data['bar'].append({'name': '其他', 'type': 'bar', 'stack': 'a', 'data': others_list})
+
+            return Response(data=data)
 
         s = OrderSerializer(queryset, many=True, context={'request': request})
         data = [dict(row) for row in s.data]
