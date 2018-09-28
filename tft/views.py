@@ -655,7 +655,7 @@ class OrderViewSet(ListModelMixin,
 
             file = os.path.join(settings.MEDIA_ROOT, 'csv', name)
 
-            with open(file, 'w') as f:
+            with open(file, 'w', encoding='utf8') as f:
                 f.write(txt)
 
             url = request.build_absolute_uri(api_settings.UPLOADED_FILES_USE_PREFIX + settings.MEDIA_URL + 'csv/' + name)

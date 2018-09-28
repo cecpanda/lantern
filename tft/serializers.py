@@ -818,6 +818,43 @@ class QcRecoverAuditSerializer(serializers.Serializer):
             return '8'
         return '0'
 
+    def validate_id(self, value):
+        try:
+            recover_order = RecoverOrder.objects.get(id=value)
+        except Exception as e:
+            raise serializers.ValidationError(f'无效的复机单{value}')
+        if recover_order.order.status != '5':
+            raise serializers.ValidationError(f'此单当前的状态是{recover_order.order.get_status_display()}，不是QC签核')
+        return recover_order
+
+    def validate_user(self, value):
+
+        qc_code = settings.GROUP_CODE['TFT'].get('QC')
+        try:
+            qc = GroupSetting.objects.get(code=qc_code).group
+        except:
+            raise serializers.ValidationError('未定义 QC 组')
+
+        if not value.groups.filter(name=qc.name).exists():
+            raise serializers.ValidationError('您不是 QC 成员，无法进行此操作')
+        return value
+
+
+    def create(self, validated_data):
+        recover_order = validated_data.get('id')
+        user = validated_data.get('user')
+        try:
+            with transaction.atomic():
+                recover_audit, created = RecoverAudit.objects.get_or_create(recover_order=recover_order)
+                recover_audit.qc_signer = user
+                recover_audit.qc_time = validated_data.get('time')
+                recover_audit.save()
+        except Exception as e:
+            raise serializers.ValidationError(f'出现错误{e}，提交数据被回滚。')
+
+        return recover_audit
+
+
 class UserOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -898,7 +935,7 @@ class ProductRecoverAuditSerializer(serializers.Serializer):
         except Exception as e:
             raise serializers.ValidationError(f'无效的复机单{value}')
         if recover_order.order.status != '6':
-            raise serializers.ValidationError(f'此单当前的状态是{recover_order.order.get_status_display()}，不是QC签核')
+            raise serializers.ValidationError(f'此单当前的状态是{recover_order.order.get_status_display()}，不是生产签核')
         return recover_order
 
     def validate_user(self, value):
