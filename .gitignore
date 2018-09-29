@@ -121,5 +121,3 @@ yarn-error.log*
 *.sln
 
 # lantern
-media/csv/*.csv
-media/xlsx/*.xlsx
