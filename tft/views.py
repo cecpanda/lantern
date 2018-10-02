@@ -436,6 +436,115 @@ class OrderViewSet(ListModelMixin,
             return ExportSerializer
         return self.serializer_class
 
+    @action(methods=['GET'], detail=False, url_path='status-flow', url_name='status_flow')
+    def status_flow(self, request):
+        id = request.query_params.get('id')
+        try:
+            order = Order.objects.get(id=id)
+        except Exception as e:
+            return Response({'detail': 'id 不存在'}, status=404)
+
+        data = {
+            'code': order.status,
+            'desc': order.get_status_display(),
+            'current': '',
+            'ago': [],
+            # 'to': [],
+            # 'ban': []
+        }
+        qc_code = settings.GROUP_CODE['TFT'].get('QC')
+        try:
+            qc = GroupSetting.objects.get(code=qc_code).group
+        except Exception:
+            return Response({'detail': '为定义QC组'}, status=400)
+
+        if data['code'] == '1':
+            if order.group.name == qc.name:
+                if order.defect_type == True:
+                    data['current'] = 'b7'
+                    data['ago'] = ['b1', 'b2', 'b4', 'l1', 'l5', 'l10']
+                else:
+                    data['current'] = 'b6'
+                    data['ago'] = ['b1', 'b2', 'b4', 'b5', 'l1', 'l5', 'l6', 'l7']
+            else:
+                data['current'] = 'b3'
+                data['ago'] = ['b1', 'b2', 'l1', 'l2']
+        elif data['code'] == '2':
+            if order.defect_type == True:
+                data['current'] = 'b8'
+                data['ago'] = ['b1', 'b2', 'b4', 'b7', 'l1', 'l5', 'l10', 'l11']
+            else:
+                data['current'] = 'b5'
+                data['ago'] = ['b1', 'b2', 'b4', 'l1', 'l5', 'l6']
+        elif data['code'] == '3':
+            data['current'] = 'b9'
+            try:
+                p_signer = order.startaudit.p_signer
+                if p_signer:
+                    data['ago'] = ['b1', 'b2', 'b4', 'b7', 'b8', 'l1', 'l5', 'l10', 'l11', 'l12']
+                else:
+                    data['ago'] = ['b1', 'b2', 'b4', 'b5', 'l1', 'l5', 'l6', 'l9']
+            except:
+                pass
+        elif data['code'] == '4':
+            data['current'] = 'b10'
+            if order.group.name == qc.name:
+                if order.defect_type == True:
+                    data['ago'] = ['b1', 'b2', 'b4', 'b7', 'b8', 'l1', 'l5', 'l10', 'l11', 'l13']
+                else:
+                    data['ago'] = ['b1', 'b2', 'b4', 'b5', 'b6', 'l1', 'l5', 'l6', 'l7', 'l8']
+            else:
+                data['ago'] = ['b1', 'b2', 'b3', 'l1', 'l2', 'l3', 'l4']
+        elif data['code'] == '5':
+            data['current'] = 'b15'
+            # 其实这个判断没有必要，因为一定是 QC
+            if order.group.name == qc.name:
+                if order.defect_type == True:
+                    data['ago'] = ['b1', 'b2', 'b4', 'b7', 'b8', 'b10', 'b11', 'b12', 'b13',
+                                   'l1', 'l5', 'l10', 'l11', 'l13', 'l14', 'l15', 'l16', 'l17']
+                else:
+                    data['ago'] = ['b1', 'b2', 'b4', 'b5', 'b6', 'b10', 'b11', 'b12', 'b13',
+                                   'l1', 'l5', 'l6', 'l7', 'l8', 'l14', 'l15', 'l16', 'l17']
+            else:
+                data['ago'] = ['b1', 'b2', 'b3', 'b10', 'b11', 'b12', 'b13',
+                               'l1', 'l2', 'l3', 'l4', 'l14', 'l15', 'l16', 'l17']
+        elif data['code'] == '6':
+            data['current'] = 'b16'
+            if order.group.name == qc.name:
+                if order.defect_type == True:
+                    data['ago'] = ['b1', 'b2', 'b4', 'b7', 'b8', 'b10', 'b11', 'b12', 'b13', 'b15',
+                                   'l1', 'l5', 'l10', 'l11', 'l13', 'l14', 'l15', 'l16', 'l17', 'l18']
+                else:
+                    data['ago'] = ['b1', 'b2', 'b4', 'b5', 'b6', 'b10', 'b11', 'b12', 'b13', 'b15',
+                                   'l1', 'l5', 'l6', 'l7', 'l8', 'l14', 'l15', 'l16', 'l17', 'l18']
+            else:
+                data['ago'] = ['b1', 'b2', 'b3', 'b10', 'b11', 'b12', 'b14',
+                               'l1', 'l2', 'l3', 'l4', 'l14', 'l15', 'l21', 'l22', 'l23']
+        elif data['code'] == '7':
+            data['current'] = 'b17'
+            if order.defect_type == True:
+                data['ago'] = ['b1', 'b2', 'b4', 'b7', 'b8', 'b10', 'b11', 'b12', 'b13', 'b15',
+                               'l1', 'l5', 'l10', 'l11', 'l13', 'l14', 'l15', 'l16', 'l17', 'l19']
+            else:
+                data['ago'] = ['b1', 'b2', 'b4', 'b5', 'b6', 'b10', 'b11', 'b12', 'b13', 'b15',
+                               'l1', 'l5', 'l6', 'l7', 'l8', 'l14', 'l15', 'l16', 'l17', 'l19']
+        elif data['code'] == '8' or data['code'] == '9':
+            data['current'] = 'b18'
+            if order.group.name == qc.name:
+                if order.defect_type == True:
+                    data['ago'] = ['b1', 'b2', 'b4', 'b7', 'b8', 'b10', 'b11', 'b12', 'b13', 'b15', 'b16',
+                                   'l1', 'l5', 'l10', 'l11', 'l13', 'l14', 'l15', 'l16', 'l17', 'l18', 'l20']
+                else:
+                    data['ago'] = ['b1', 'b2', 'b4', 'b5', 'b6', 'b10', 'b11', 'b12', 'b13', 'b15', 'b16',
+                                   'l1', 'l5', 'l6', 'l7', 'l8', 'l14', 'l15', 'l16', 'l17', 'l18', 'b20']
+            else:
+                data['ago'] = ['b1', 'b2', 'b3', 'b10', 'b11', 'b12', 'b14', 'b16',
+                              'l1', 'l2', 'l3', 'l4', 'l14', 'l15', 'l21', 'l22', 'l23', 'b20']
+        else:
+            data['current'] = 'b1'
+
+        return Response(data)
+
     @action(methods=['GET'], detail=False, url_path='summary', url_name='summary')
     def summary(self, request):
         '''
