@@ -1128,4 +1128,4 @@ class ListRecoverOrderSerializer(serializers.ModelSerializer):
 
 class ExportSerializer(serializers.Serializer):
     ids = serializers.ListField(label='开单编号', child=serializers.CharField(), min_length=1)
-    format = serializers.ChoiceField(label='格式', choices=('csv', 'xlsx', 'chart'))
+    format = serializers.ChoiceField(label='格式', choices=('csv', 'xls', 'xlsx', 'chart'))

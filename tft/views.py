@@ -2,6 +2,10 @@ import os
 import json
 import string
 import random
+from collections import OrderedDict
+from datetime import datetime
+
+import pandas as pd
 
 from django.conf import settings
 from django.shortcuts import render
@@ -670,6 +674,7 @@ class OrderViewSet(ListModelMixin,
         ids = serializer.validated_data.get('ids')
         format = serializer.validated_data.get('format')
         queryset = Order.objects.filter(id__in=ids)
+        s = OrderSerializer(queryset, many=True, context={'request': request})
 
         if format == 'chart':
             groups = set()
@@ -724,19 +729,10 @@ class OrderViewSet(ListModelMixin,
 
             return Response(data=data)
 
-        s = OrderSerializer(queryset, many=True, context={'request': request})
-        data = [dict(row) for row in s.data]
+        elif format == 'csv':
+            data = [dict(row) for row in s.data]
 
-        # return HttpResponseRedirect(reverse('tft:order-exporting'))
-
-        return self.exporting(request, data, format)
-
-    # @action(methods=['GET'], detail=False, url_path='exporting', url_name='exporting')
-    def exporting(self, request, data, format='csv'):
-        if format == 'xlsx':
-            pass
-
-        else:
+            # return HttpResponseRedirect(reverse('tft:order-exporting'))
             # 前端使用下面的代码保存
             '''
             let blob = new Blob([res.data], {type: 'text/plain;charset=utf-8'})
@@ -754,7 +750,6 @@ class OrderViewSet(ListModelMixin,
             # 或者在服务端生成 csv，将连接发送给前端
             t = loader.get_template('tft/orders.txt')
 
-
             context = {'data': data}
 
             txt = t.render(context)
@@ -767,5 +762,151 @@ class OrderViewSet(ListModelMixin,
             with open(file, 'w', encoding='utf8') as f:
                 f.write(txt)
 
-            url = request.build_absolute_uri(api_settings.UPLOADED_FILES_USE_PREFIX + settings.MEDIA_URL + 'csv/' + name)
+            url = request.build_absolute_uri(
+                api_settings.UPLOADED_FILES_USE_PREFIX + settings.MEDIA_URL + 'csv/' + name)
+            return Response({'url': url})
+        else:
+            data = []
+            for row in s.data:
+                item = OrderedDict()
+                item['编号'] = row.get('id')
+                item['状态'] = row.get('status').get('desc')
+                item['申请人工号'] = row.get('user').get('username')
+                item['申请人真名'] = row.get('user').get('realname')
+                item['开单工程'] = row.get('group').get('name')
+                item['开单时间'] = row.get('created')
+                if row.get('created'):
+                    item['开单时间'] = datetime.fromisoformat(row.get('created')).strftime('%Y/%m/%d %H:%M:%S')
+                else:
+                    item['开单时间'] = None
+                item['修改人工号'] = row.get('mod_user').get('username')
+                item['修改人真名'] = row.get('mod_user').get('realname')
+                if row.get('modified'):
+                    item['修改时间'] = datetime.fromisoformat(row.get('modified')).strftime('%Y/%m/%d %H:%M:%S')
+                else:
+                    item['修改时间'] = None
+                item['发现站点'] = row.get('found_step')
+                if row.get('found_time'):
+                    item['发现时间'] = datetime.fromisoformat(row.get('found_time')).strftime('%Y/%m/%d %H:%M:%S')
+                else:
+                    item['发现时间'] = None
+                item['责任工程'] = row.get('charge_group').get('name')
+                item['停机设备'] = row.get('eq')
+                item['停机机种'] = row.get('kind')
+                item['停机站点'] = row.get('step')
+                item['停机原因'] = row.get('reason')
+                item['通知生产人员'] = row.get('users')
+                item['通知制程人员'] = row.get('charge_users')
+                item['异常描述'] = row.get('desc')
+                if row.get('start_time'):
+                    item['受害开始时间'] = datetime.fromisoformat(row.get('start_time')).strftime('%Y/%m/%d %H:%M:%S')
+                else:
+                    item['受害开始时间'] = None
+                if row.get('end_time'):
+                    item['受害结束时间'] = datetime.fromisoformat(row.get('end_time')).strftime('%Y/%m/%d %H:%M:%S')
+                else:
+                    item['受害结束时间'] = None
+                item['受害批次数'] = row.get('lot_num')
+                item['异常批次/基板'] = row.get('lots')
+                item['复机条件'] = row.get('condition')
+
+                if row.get('defect_type') == True:
+                    item['绝对不良'] = '是'
+                elif row.get('defect_type') == False:
+                    item['绝对不良'] = '否'
+                else:
+                    item['绝对不良'] = None
+
+                item['调查报告'] = None                     ###
+                if row.get('remarks'):
+                    user = row.get('remarks')[0].get('user')
+                    username = user.get('username')
+                    realname = user.get('realname')
+                    content = row.get('remarks')[0].get('content')
+                    item['最新批注'] = f'{username}/{realname}: {content}'
+                else:
+                    item['最新批注'] = None
+
+                audit = row.get('startaudit')
+                item['生产领班签核'] = audit.get('p_signer').get('username')
+                if audit.get('p_time'):
+                    item['生产签字时间'] = datetime.fromisoformat(audit.get('p_time')).strftime('%Y/%m/%d %H:%M:%S')
+                else:
+                    item['生产签字时间'] = None
+                item['Recipe关闭人员'] = audit.get('recipe_close')
+                item['Recipe确认人员'] = audit.get('recipe_confirm')
+                item['责任工程签字'] = audit.get('c_signer').get('username')
+                if audit.get('c_time'):
+                    item['工程签字时间'] = datetime.fromisoformat(audit.get('c_time')).strftime('%Y/%m/%d %H:%M:%S')
+                else:
+                    item['工程签字时间'] = None
+
+                if audit.get('rejected'):
+                    item['是否拒签'] = '是'
+                else:
+                    item['是否拒签'] = '否'
+
+                item['拒签理由'] = audit.get('reason')
+
+                i = 1
+                for r in row.get('recoverorders'):
+                    item[f'复机单号{i}'] = r.get('id')
+                    item[f'复机申请人{i}'] = r.get('user').get('username')
+                    item[f'复机申请人真名{i}'] = r.get('user').get('realname')
+                    if r.get('created'):
+                        item['复机申请时间{i}'] = datetime.fromisoformat(r.get('created')).strftime('%Y/%m/%d %H:%M:%S')
+                    else:
+                        item['复机申请时间{i}'] = None
+                    item[f'复机修改人{i}'] = r.get('mod_user').get('username')
+                    item[f'复机修改人真名{i}'] = r.get('mod_user').get('realname')
+                    if r.get('modified'):
+                        item['复机修改时间{i}'] = datetime.fromisoformat(r.get('modified')).strftime('%Y/%m/%d %H:%M:%S')
+                    else:
+                        item['复机修改时间{i}'] = None
+                    item[f'责任单位对策说明{i}'] = r.get('solution')
+                    item[f'先行lot结果说明{i}'] = r.get('explain')
+                    if r.get('partial'):
+                        item[f'部分复机{i}'] = '是'
+                    else:
+                        item[f'部分复机{i}'] = '否'
+                    item[f'部分复机设备{i}'] = r.get('eq')
+                    item[f'部分复机机种{i}'] = r.get('kind')
+                    item[f'部分复机站点{i}'] = r.get('step')
+
+                    r_audit = r.get('audit')
+                    item[f'工程品质签复{i}'] = r_audit.get('qc_signer').get('username')
+                    if r_audit.get('qc_time'):
+                        item['品质签复时间{i}'] = datetime.fromisoformat(r_audit.get('qc_time')).strftime('%Y/%m/%d %H:%M:%S')
+                    else:
+                        item['品质签复时间{i}'] = None
+                    item[f'生产领班签复{i}'] = r_audit.get('p_signer').get('username')
+                    if r_audit.get('p_time'):
+                        item['生产签复时间{i}'] = datetime.fromisoformat(r_audit.get('p_time')).strftime('%Y/%m/%d %H:%M:%S')
+                    else:
+                        item['生产签复时间{i}'] = None
+
+                    if r_audit.get('rejected'):
+                        item[f'是否拒签{i}'] = '是'
+                    else:
+                        item[f'是否拒签{i}'] = '否'
+
+                    item[f'拒签理由{i}'] = r_audit.get('reason')
+
+                    i += 1
+
+                data.append(item)
+
+            df = pd.DataFrame(data)
+
+            random_string = ''.join(random.sample(string.ascii_letters + string.digits, 7))
+
+            name = random_string + '.' + format
+            file = os.path.join(settings.MEDIA_ROOT, 'xlsx', name)
+
+            engine = 'xlsxwriter' if format=='xlsx' else 'xlwt'
+
+            df.to_excel(file, sheet_name='停机单列表', engine=engine)
+
+            url = request.build_absolute_uri(
+                api_settings.UPLOADED_FILES_USE_PREFIX + settings.MEDIA_URL + 'xlsx/' + name)
             return Response({'url': url})
