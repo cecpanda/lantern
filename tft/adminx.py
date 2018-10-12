@@ -19,7 +19,6 @@ class OrderAdmin(object):
     list_display = ['id', 'status', 'next', 'user', 'defect_type', 'created']
 
 
-
 class AuditAdmin(object):
     list_display = ['order', 'p_signer', 'c_signer', 'rejected']
 
