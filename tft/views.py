@@ -931,98 +931,192 @@ class OrderViewSet(ListModelMixin,
 
         h1_fmt = workbook.add_format({
             'bold': 2,
-            'font_size': 13,
-            'bg_color': '#9FA4A9',
+            'font_size': 12,
+            # 'bg_color': '#9FA4A9',
             'align': 'center',
         })
         h3_fmt = workbook.add_format({
             'bold': 1,
-            'font_size': 12,
-            'bg_color': '#9FA4A9',
+            'font_size': 11,
+            # 'bg_color': '#9FA4A9',
+            'align': 'center',
+        })
+        center_fmt = workbook.add_format({
+            'align': 'center',
+            # 'text_justlast': True
+            # 'shrink': True
         })
         label_fmt = workbook.add_format({
-            'bold': True
+            # 'bold': True
             # 'bg_color': '#9FA4A9'
         })
         date_fmt = workbook.add_format({
             'num_format': 'mmmm d yyyy'
         })
 
-        sheet1.set_column(0, 0, 15)
-        sheet1.set_column(1, 1, 18)
-        sheet1.set_column(2, 2, 15)
-        sheet1.set_column(3, 3, 18)
-        sheet1.set_column(4, 5, 15)
-        sheet1.set_column(6, 6, 18)
+        sheet1.set_column(0, 0, 5)
+        sheet1.set_column(1, 1, 20, label_fmt)
+        sheet1.set_column(2, 2, 25)
+        sheet1.set_column(3, 3, 20, label_fmt)
+        sheet1.set_column(4, 4, 25)
+        sheet1.set_column(5, 5, 20, label_fmt)
+        sheet1.set_column(6, 6, 25)
+
 
         try:
-            sheet1.merge_range('A1:F1', '设备品质异常停机单', h1_fmt)
+            sheet1.merge_range('B2:G2', '设备品质异常停机单', h1_fmt)
 
-            sheet1.write('A2', '编号', label_fmt)
-            sheet1.write('B2', data.get('id'))
-            sheet1.write('C2', '状态', label_fmt)
-            sheet1.write('D2', data.get('status').get('desc'))
-            sheet1.write('E2', '开单工程', label_fmt)
-            sheet1.write('F2', data.get('group').get('name'))
+            sheet1.write('B3', '发行编号')
+            sheet1.merge_range('C3:G3', data.get('id'))
 
-            sheet1.write('A3', '开单人员', label_fmt)
-            sheet1.write('B3', data.get('user').get('username'))
-            sheet1.write('C3', '开单时间', label_fmt)
-            sheet1.write('D3', datetime.fromisoformat(data.get('created')).strftime('%Y/%m/%d %H:%M:%S'))
+            sheet1.write('B4', '开单工程')
+            sheet1.write('C4', data.get('group').get('name'))
+            sheet1.write('D4', '开单人员')
+            sheet1.write('E4', data.get('user').get('username'))
+            sheet1.write('F4', '开单时间')
+            sheet1.write('G4', datetime.fromisoformat(data.get('created')).strftime('%Y/%m/%d %H:%M:%S'))
 
-            sheet1.write('A4', '修改人员', label_fmt)
-            sheet1.write('B4', data.get('mod_user').get('username'))
-            sheet1.write('C4', '修改时间', label_fmt)
-            sheet1.write('D4', datetime.fromisoformat(data.get('modified')).strftime('%Y/%m/%d %H:%M:%S'))
+            sheet1.write('B5', '发现站点')
+            sheet1.write('C5', data.get('found_step'))
+            sheet1.write('D5', '发现时间')
+            sheet1.write('E5', datetime.fromisoformat(data.get('found_time')).strftime('%Y/%m/%d %H:%M:%S'))
+            sheet1.write('F5', '责任工程')
+            sheet1.write('G5', data.get('charge_group').get('name'))
 
-            sheet1.write('A5', '发现站点', label_fmt)
-            sheet1.write('B5', data.get('found_step'))
-            sheet1.write('C5', '发现时间', label_fmt)
-            sheet1.write('D5', datetime.fromisoformat(data.get('found_time')).strftime('%Y/%m/%d %H:%M:%S'))
-            sheet1.write('E5', '责任工程', label_fmt)
-            sheet1.write('F5', data.get('charge_group').get('name'))
+            sheet1.write('B6', '停机设备')
+            sheet1.write('C6', data.get('eq'))
+            sheet1.write('D6', '停机机种')
+            sheet1.write('E6', data.get('kind'))
+            sheet1.write('F6', '停机站点')
+            sheet1.write('G6', data.get('step'))
 
-            sheet1.write('A6', '停机设备', label_fmt)
-            sheet1.write('B6', data.get('eq'))
-            sheet1.write('C6', '停机机种', label_fmt)
-            sheet1.write('D6', data.get('kind'))
-            sheet1.write('E6', '停机站点', label_fmt)
-            sheet1.write('F6', data.get('step'))
+            sheet1.write('B7', '停机原因')
+            sheet1.write('C7', data.get('reason'))
+            sheet1.write('D7', '通知生产人员')
+            sheet1.write('E7', data.get('users'))
+            sheet1.write('F7', '通知制程人员')
+            sheet1.write('G7', data.get('charge_users'))
 
-            sheet1.write('A7', '停机原因', label_fmt)
-            sheet1.merge_range('B7:D8', data.get('reason'))
-            sheet1.write('E7', '通知生产人员', label_fmt)
-            sheet1.write('F7', data.get('users'))
-            sheet1.write('E8', '通知制程人员', label_fmt)
-            sheet1.write('F8', data.get('charge_users'))
+            sheet1.merge_range('B8:G8', '异常状况描述（不良现象说明）')
 
-            sheet1.merge_range('A9:F9', '异常状况描述（不良现象说明）', h3_fmt)
+            sheet1.write('B9', '异常描述')
+            sheet1.merge_range('C9:E9', data.get('desc'))
+            sheet1.write('F9', '受害起止时间')
+            if data.get('start_time') and data.get('end_time'):
+                sheet1.write('G9', datetime.fromisoformat(data.get('start_time')).strftime('%Y/%m/%d %H:%M:%S') + '-' + datetime.fromisoformat(data.get('end_time')).strftime('%Y/%m/%d %H:%M:%S'))
 
-            sheet1.write('A10', '异常描述', label_fmt)
-            sheet1.merge_range('B10:D11', data.get('desc'))
-            sheet1.write('E10', '受害开始时间', label_fmt)
-            if data.get('start_time'):
-                sheet1.write('F10', datetime.fromisoformat(data.get('start_time')).strftime('%Y/%m/%d %H:%M:%S'))
-            sheet1.write('E11', '受害结束时间', label_fmt)
-            if data.get('end_time'):
-                sheet1.write('F11', datetime.fromisoformat(data.get('end_time')).strftime('%Y/%m/%d %H:%M:%S'))
+            sheet1.write('B10', '调查报告')
+            reports = ''
+            for report in data.get('reports').keys():
+                reports += str(report) + ', '
+            sheet1.merge_range('C10:E10', reports)
+            sheet1.write('F10', '受害批次数')
+            sheet1.write('G10', data.get('lot_num'))
 
-            sheet1.write('A12', '异常批次/基板', label_fmt)
-            sheet1.merge_range('B12:D12', data.get('lots'))
-            sheet1.write('E12', '受害批次数', label_fmt)
-            sheet1.write('F12', data.get('lot_num'))
+            sheet1.write('B11', '复机条件')
+            sheet1.merge_range('C11:E11', data.get('condition'))
+            sheet1.write('F11', '异常批次ID/基板ID')
+            sheet1.write('G11', data.get('lots'))
 
-            sheet1.write('A13', '复机条件', label_fmt)
-            sheet1.merge_range('B13:D13', data.get('condition'))
-            sheet1.write('E13', '绝对不良', label_fmt)
+            # sheet1.set_row(11, 30)
+            sheet1.write('B12', '不良类型（绝对不良/非绝对不良）')
             if data.get('defect_type') == True:
-                sheet1.write('F13', '是')
+                sheet1.merge_range('C12:G12', '是')
             elif data.get('defect_type') == False:
-                sheet1.write('F13', '否')
+                sheet1.merge_range('C12:G12', '否')
             else:
                 pass
 
-            sheet1.write('A14', '最新批注', label_fmt)
+            sheet1.merge_range('B13:G13', '停机签核', h3_fmt)
+
+            audit = data.get('startaudit')
+
+            sheet1.write('B14', '是否拒签')
+            if audit.get('rejected'):
+                sheet1.merge_range('C14:D14', '是')
+            else:
+                sheet1.merge_range('C14:D14', '否')
+            sheet1.write('E14', 'Recipe关闭人员')
+            sheet1.merge_range('F14:F14', audit.get('recipe_close'))
+
+            sheet1.write('B15', '拒签理由')
+            sheet1.merge_range('C15:D15', audit.get('reason'))
+            sheet1.write('E15', 'Recipe确认人员')
+            sheet1.merge_range('F15:G15', audit.get('recipe_confirm'))
+
+            sheet1.write('B16', '责任工程签字')
+            sheet1.merge_range('C16:D16', audit.get('c_signer').get('username'))
+            sheet1.write('E16', '生产领班签核')
+            sheet1.merge_range('F16:G16', audit.get('p_signer').get('username'))
+
+            sheet1.write('B17', '工程签字时间')
+            if audit.get('c_time'):
+                sheet1.merge_range('C17:D17', datetime.fromisoformat(audit.get('c_time')).strftime('%Y/%m/%d %H:%M:%S'))
+            sheet1.write('E17', '生产签字时间')
+            if audit.get('p_time'):
+                sheet1.merge_range('F17:G17', datetime.fromisoformat(audit.get('p_time')).strftime('%Y/%m/%d %H:%M:%S'))
+
+            recoverorders = data.get('recoverorders')
+            index = len(recoverorders)
+            row = 17
+            for r in recoverorders:
+                sheet1.merge_range(row, 1, row, 6, f'设备品质异常复机单 {index}，id：{r.get("id")}' , h1_fmt)
+
+                sheet1.write(row + 1, 1, '申请复机人员')
+                sheet1.merge_range(row + 1, 2, row + 1, 3, r.get('user').get('username'))
+                sheet1.write(row + 1, 4, '申请时间')
+                if r.get('created'):
+                    sheet1.merge_range(row + 1, 5, row + 1, 6, datetime.fromisoformat(r.get('created')).strftime('%Y/%m/%d %H:%M:%S'))
+
+                sheet1.write(row + 2, 1, '责任单位对策说明')
+                sheet1.merge_range(row + 2, 2, row + 2, 6, r.get('solution'))
+
+                sheet1.write(row + 3, 1, '先行lot结果说明')
+                sheet1.merge_range(row + 3, 2, row + 3, 6, r.get('explain'))
+
+                # sheet1.set_row(row + 4, 30)
+                sheet1.write(row + 4, 1, '复机类型（部分复机/全部复机）', center_fmt)
+                if r.get('partial'):
+                    sheet1.merge_range(row + 4, 2, row + 4, 6, '是')
+                else:
+                    sheet1.merge_range(row + 4, 2, row + 4, 6, '否')
+
+                sheet1.merge_range(row + 5, 1, row + 5, 6, '部分复机（当复机类型选为部分复机时，以下必填）', center_fmt)
+
+                sheet1.write(row + 6, 1, '部分复机设备')
+                sheet1.write(row + 6, 2, r.get('eq'))
+                sheet1.write(row + 6, 3, '部分复机机种')
+                sheet1.write(row + 6, 4, r.get('kind'))
+                sheet1.write(row + 6, 5, '部分复机站点')
+                sheet1.write(row + 6, 6, r.get('step'))
+
+                r_audit = r.get('audit')
+                sheet1.merge_range(row + 7, 1, row + 7, 6, '复机签核', h3_fmt)
+
+                sheet1.write(row + 8, 1, '工程品质签字')
+                sheet1.merge_range(row + 8, 2, row + 8, 3, r_audit.get('qc_signer').get('username'))
+                sheet1.write(row + 8, 4, '生产领班签复')
+                sheet1.merge_range(row + 8, 5, row + 8, 6, r_audit.get('p_signer').get('username'))
+
+                sheet1.write(row + 9, 1, '品质签复时间')
+                if r_audit.get('qc_time'):
+                    sheet1.merge_range(row + 9, 2, row + 9, 3, datetime.fromisoformat(r_audit.get('qc_time')).strftime('%Y/%m/%d %H:%M:%S'))
+                sheet1.write(row + 9, 4, '生产签复时间')
+                if r_audit.get('p_time'):
+                    sheet1.merge_range(row + 9, 5, row + 9, 6, datetime.fromisoformat(r_audit.get('p_time')).strftime('%Y/%m/%d %H:%M:%S'))
+
+                sheet1.write(row + 10, 1, '是否拒签')
+                if r_audit.get('rejected'):
+                    sheet1.merge_range(row + 10, 2, row + 10, 3, '是')
+                else:
+                    sheet1.merge_range(row + 10, 2, row + 10, 3, '否')
+                sheet1.write(row + 10, 4, '拒签理由')
+                sheet1.merge_range(row + 10, 5, row + 10, 6, r_audit.get('reason'))
+
+                index -= 1
+                row += 11
+
+            sheet1.merge_range(row, 1, row, 6, '生产批注', center_fmt)
             if data.get('remarks'):
                 user = data.get('remarks')[0].get('user')
                 username = user.get('username')
@@ -1031,110 +1125,8 @@ class OrderViewSet(ListModelMixin,
                 remark = f'{username}/{realname}: {content}'
             else:
                 remark = None
-            sheet1.merge_range('B14:D14', remark)
-            sheet1.write('E14', '调查报告', label_fmt)
-            reports = ''
-            for report in data.get('reports').keys():
-                reports += str(report) + ', '
-            sheet1.write('F14', reports)
-
-            sheet1.merge_range('A15:F15', '停机签核', h3_fmt)
-
-            audit = data.get('startaudit')
-
-            sheet1.write('A16', '生产领班签核', label_fmt)
-            sheet1.merge_range('B16:C16', audit.get('p_signer').get('username'))
-            sheet1.write('D16', '生产签字时间', label_fmt)
-            if audit.get('p_time'):
-                sheet1.merge_range('E16:F16', datetime.fromisoformat(audit.get('p_time')).strftime('%Y/%m/%d %H:%M:%S'))
-
-            sheet1.write('A17', 'Recipe关闭人员', label_fmt)
-            sheet1.merge_range('B17:C17', audit.get('recipe_close'))
-            sheet1.write('D17', 'Recipe确认人员', label_fmt)
-            sheet1.merge_range('E17:F17', audit.get('recipe_confirm'))
-
-            sheet1.write('A18', '责任工程签字', label_fmt)
-            sheet1.merge_range('B18:C18', audit.get('c_signer').get('username'))
-            sheet1.write('D18', '工程签字时间', label_fmt)
-            if audit.get('c_time'):
-                sheet1.merge_range('E18:F18', datetime.fromisoformat(audit.get('c_time')).strftime('%Y/%m/%d %H:%M:%S'))
-
-            sheet1.write('A19', '是否拒签', label_fmt)
-            if audit.get('rejected'):
-                sheet1.merge_range('B19:C19', '是')
-            else:
-                sheet1.merge_range('B19:C19', '否')
-            sheet1.write('D19', '拒签理由', label_fmt)
-            sheet1.merge_range('E19:F19', audit.get('reason'))
-
-            sheet1.merge_range('A20:F20', '设备品质异常复机单', h1_fmt)
-
-            recoverorders = data.get('recoverorders')
-            index = len(recoverorders)
-            row = 20
-            for r in recoverorders:
-                sheet1.write(row, 0, f'复机单{index}', h3_fmt)
-                sheet1.write(row, 1, r.get('id'), h3_fmt)
-
-                sheet1.write(row+1, 0, '申请人', label_fmt)
-                sheet1.merge_range(row+1, 1, row+1, 2, r.get('user').get('username'))
-                sheet1.write(row+1, 3, '申请时间', label_fmt)
-                if r.get('created'):
-                    sheet1.merge_range(row+1, 4, row+1, 5, datetime.fromisoformat(r.get('created')).strftime('%Y/%m/%d %H:%M:%S'))
-
-                sheet1.write(row+2, 0, '修改人', label_fmt)
-                sheet1.merge_range(row+2, 1, row+2, 2, r.get('mod_user').get('username'))
-                sheet1.write(row+2, 3, '修改时间', label_fmt)
-                if r.get('modified'):
-                    sheet1.merge_range(row+2, 4, row+2, 5, datetime.fromisoformat(r.get('modified')).strftime('%Y/%m/%d %H:%M:%S'))
-
-                sheet1.write(row+3, 0, '责任单位对策说明', label_fmt)
-                sheet1.merge_range(row+3, 1, row+3, 5, r.get('solution'))
-
-                sheet1.write(row+4, 0, '先行lot结果说明', label_fmt)
-                sheet1.merge_range(row + 4, 1, row + 4, 5, r.get('explain'))
-
-                sheet1.write(row + 5, 0, '部分复机', label_fmt)
-                if r.get('partial'):
-                    sheet1.merge_range(row + 5, 1, row + 5, 5, '是')
-                else:
-                    sheet1.merge_range(row + 5, 1, row + 5, 5, '否')
-
-                sheet1.write(row + 6, 0, '部分复机设备', label_fmt)
-                sheet1.merge_range(row + 6, 1, row + 6, 5, r.get('eq'))
-
-                sheet1.write(row + 7, 0, '部分复机机种', label_fmt)
-                sheet1.merge_range(row + 7, 1, row + 7, 5, r.get('kind'))
-
-                sheet1.write(row + 8, 0, '部分复机站点', label_fmt)
-                sheet1.merge_range(row + 8, 1, row + 8, 5, r.get('step'))
-
-                r_audit = r.get('audit')
-                sheet1.merge_range(row + 9, 0, row + 9, 5, '复机签核', h3_fmt)
-
-                sheet1.write(row + 10, 0, '工程品质签复', label_fmt)
-                sheet1.merge_range(row + 10, 1, row + 10, 2, r_audit.get('qc_signer').get('username'))
-                sheet1.write(row + 10, 3, '品质签复时间', label_fmt)
-                if r_audit.get('qc_time'):
-                    sheet1.merge_range(row + 10, 4, row + 10, 5, datetime.fromisoformat(r_audit.get('qc_time')).strftime('%Y/%m/%d %H:%M:%S'))
-
-                sheet1.write(row + 11, 0, '生产领班签复', label_fmt)
-                sheet1.merge_range(row + 11, 1, row + 11, 2, r_audit.get('p_signer').get('username'))
-                sheet1.write(row + 11, 3, '生产签复时间', label_fmt)
-                if r_audit.get('p_time'):
-                    sheet1.merge_range(row + 11, 4, row + 11, 5, datetime.fromisoformat(r_audit.get('p_time')).strftime('%Y/%m/%d %H:%M:%S'))
-
-                sheet1.write(row + 12, 0, '是否拒签', label_fmt)
-                if r_audit.get('rejected'):
-                    sheet1.write(row + 12, 1, '是')
-                else:
-                    sheet1.write(row + 12, 1, '否')
-
-                sheet1.write(row + 13, 0, '拒签理由', label_fmt)
-                sheet1.merge_range(row + 13, 1, row + 13, 5, r_audit.get('reason'))
-
-                index -= 1
-                row += 14
+            sheet1.write(row + 1, 1, '最新批注')
+            sheet1.merge_range(row + 1, 2, row + 1, 6, remark)
 
             workbook.close()
         except:
