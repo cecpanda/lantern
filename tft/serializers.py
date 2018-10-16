@@ -839,6 +839,12 @@ class QcRecoverAuditSerializer(serializers.Serializer):
             raise serializers.ValidationError('您不是 QC 成员，无法进行此操作')
         return value
 
+    def validate(self, attrs):
+        if attrs.get('rejected'):
+            if not attrs.get('reason'):
+                raise serializers.ValidationError('拒签要有理由')
+        return attrs
+
 
     def create(self, validated_data):
         recover_order = validated_data.get('id')
@@ -848,6 +854,8 @@ class QcRecoverAuditSerializer(serializers.Serializer):
                 recover_audit, created = RecoverAudit.objects.get_or_create(recover_order=recover_order)
                 recover_audit.qc_signer = user
                 recover_audit.qc_time = validated_data.get('time')
+                recover_audit.rejected = True if validated_data.get('rejected') else False
+                recover_audit.reason = validated_data.get('reason')
                 recover_audit.save()
         except Exception as e:
             raise serializers.ValidationError(f'出现错误{e}，提交数据被回滚。')
