@@ -3,7 +3,8 @@ import xadmin
 from .models import ID, Order, Audit, \
                     RecoverOrder, RecoverAudit, \
                     Report, Remark, \
-                    Shortcut, ShortcutContent
+                    Shortcut, ShortcutContent, \
+                    OrderFlow
 
 #
 # class EqKindAdmin(object):
@@ -16,7 +17,7 @@ from .models import ID, Order, Audit, \
 
 
 class OrderAdmin(object):
-    list_display = ['id', 'status', 'next', 'user', 'defect_type', 'created']
+    list_display = ['id', 'status', 'user', 'defect_type', 'created']
 
 
 class AuditAdmin(object):
@@ -40,12 +41,14 @@ class ShortcutAdmin(object):
     list_display = ('name', )
 
 
-
 class ShortcutContentAdmin(object):
     list_display = ('name', 'content')
 
 
-xadmin.site.register(ID)
+class OrderFlowAdmin(object):
+    list_display = ('order', 'flow', 'created')
+
+
 xadmin.site.register(Order, OrderAdmin)
 xadmin.site.register(Audit, AuditAdmin)
 xadmin.site.register(RecoverOrder, RecoverOrderAdmin)
@@ -54,3 +57,5 @@ xadmin.site.register(Report)
 xadmin.site.register(Remark)
 # xadmin.site.register(Shortcut, ShortcutAdmin)
 xadmin.site.register(ShortcutContent, ShortcutContentAdmin)
+xadmin.site.register(OrderFlow, OrderFlowAdmin)
+xadmin.site.register(ID)

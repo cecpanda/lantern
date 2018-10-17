@@ -33,7 +33,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from account.models import GroupSetting
 from action.utils import create_action
-from .models import Order, Audit, RecoverOrder, RecoverAudit, Remark, Shortcut
+from .models import Order, Audit, RecoverOrder, RecoverAudit, Remark, Shortcut, OrderFlow
 from .serializers import StartOrderSerializer, RetrieveStartOrderSerializer, \
                          ProductAuditSerializer, ChargeAuditSerializer, \
                          ListRecoverOrderSerializer, RecoverOrderSerializer, UpdateRecoverOrderSerializer, \
@@ -41,7 +41,13 @@ from .serializers import StartOrderSerializer, RetrieveStartOrderSerializer, \
                          RemarkSerializer, CreateRemarkSerializer, \
                          OrderSerializer, ShortcutSerializer, \
                          ExportSerializer
-
+# from .serializers import (StartOrderSerializer, RetrieveStartOrderSerializer,
+#                           ProductAuditSerializer, ChargeAuditSerializer,
+#                           ListRecoverOrderSerializer, RecoverOrderSerializer, UpdateRecoverOrderSerializer,
+#                           QcRecoverAuditSerializer, ProductRecoverAuditSerializer,
+#                           RemarkSerializer, CreateRemarkSerializer,
+#                           OrderSerializer, ShortcutSerializer,
+#                           ExportSerializer)
 from .utils import IsSameGroup, RecoverOrderIsSameGroup, IsMFGUser, OrderPagination, OrderFilter, RecoverOrderFilter
 
 
@@ -553,8 +559,7 @@ class OrderViewSet(ListModelMixin,
     @action(methods=['GET'], detail=False, url_path='summary', url_name='summary')
     def summary(self, request):
         '''
-        [{'cvd': ['停机单数', ‘停机审核中’, '停机拒签', ‘停机完成’,
-                  '已复机', '复机完成率', '其他（复机审核中、复机拒签、部分复机）']}, ...]
+        [{'cvd': ['停机单数', ‘停机审核中’, '停机拒签', ‘停机完成’] ...}]
         '''
         which = request.query_params.get('which')
         if not which in ['group', 'charge_group']:
@@ -567,7 +572,6 @@ class OrderViewSet(ListModelMixin,
         rejects_list = []
         closed_list = []
         finished_list = []
-        others_list = []
         """
         groups: ['CVD', 'MFG', 'PVD',]
         table: [
@@ -605,7 +609,11 @@ class OrderViewSet(ListModelMixin,
                 #     rate = '{:.2%}'.format(finished / sum)
                 # except ZeroDivisionError as e:
                 #     rate = '{:.2%}'.format(0)
-                others = Order.objects.filter(group=group, status__in=['0', '5', '6', '7', '8']).count()
+                r_audits = Order.objects.filter(group=group, status__in=[5, 6])\
+                                        .exclude(flows__flow__in=[8 ,9]).count()
+                r_rejects = Order.objects.filter(group=group, status=7)\
+                                                .exclude(flows__flow__in=[8, 9]).count()
+                r_closed = Order.objects.filter(group=group, flows__flow=8).exclude(flows__flow=9)
 
                 data['groups'].append(group.name)
                 data['table'].append({
@@ -614,8 +622,7 @@ class OrderViewSet(ListModelMixin,
                     'audits': audits,
                     'rejects': rejects,
                     'closed': closed,
-                    'finished': finished,
-                    'others': others
+                    'finished': finished
                 })
                 if sum > 0:
                     data['pie'].append({'value': sum, 'name': group.name})
@@ -625,7 +632,6 @@ class OrderViewSet(ListModelMixin,
                 rejects_list.append(rejects)
                 closed_list.append(closed)
                 finished_list.append(finished)
-                others_list.append(others)
         elif which == 'charge_group':
             for group in groups:
                 sum = Order.objects.filter(charge_group=group).count()
@@ -637,7 +643,6 @@ class OrderViewSet(ListModelMixin,
                 #     rate = '{:.2%}'.format(finished / sum)
                 # except ZeroDivisionError as e:
                 #     rate = '{:.2%}'.format(0)
-                others = Order.objects.filter(charge_group=group, status__in=['0', '5', '6', '7', '8']).count()
                 data['groups'].append(group.name)
                 data['table'].append({
                     'group': group.name,
@@ -646,7 +651,6 @@ class OrderViewSet(ListModelMixin,
                     'rejects': rejects,
                     'closed': closed,
                     'finished': finished,
-                    'others': others
                 })
                 if sum > 0:
                     data['pie'].append({'value': sum, 'name': group.name})
@@ -656,14 +660,12 @@ class OrderViewSet(ListModelMixin,
                 rejects_list.append(rejects)
                 closed_list.append(closed)
                 finished_list.append(finished)
-                others_list.append(others)
 
         data['bar'].append({'name': '停机单数', 'type': 'bar', 'data': sum_list})
         data['bar'].append({'name': '停机审核中', 'type': 'bar', 'stack': 'a', 'data': audits_list})
         data['bar'].append({'name': '停机拒签', 'type': 'bar', 'stack': 'a', 'data': rejects_list})
         data['bar'].append({'name': '停机完成', 'type': 'bar', 'stack': 'a', 'data': closed_list})
         data['bar'].append({'name': '已复机', 'type': 'bar', 'stack': 'a', 'data': finished_list})
-        data['bar'].append({'name': '其他', 'type': 'bar', 'stack': 'a', 'data': others_list})
 
         return Response(data=data)
 

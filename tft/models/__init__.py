@@ -4,3 +4,4 @@ from .order import ID, Order, Audit, \
                    RecoverOrder, RecoverAudit, \
                    Report, Remark
 from .shortcut import Shortcut, ShortcutContent
+from .flow import OrderFlow
