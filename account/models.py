@@ -11,7 +11,7 @@ class User(AbstractUser):
         ("F", "女")
     )
     # username
-    realname = models.CharField('真名', max_length=10, blank=True, null=True)
+    realname = models.CharField('真名', max_length=10, help_text='长度不大于10')
     email = models.EmailField('邮箱', max_length=100, blank=True, null=True)
     mobile = models.CharField("手机", max_length=11, blank=True, null=True)
     phone = models.CharField('电话', max_length=6, blank=True, null=True)

@@ -1,7 +1,8 @@
 # coding=utf-8
 from django import forms
 from django.contrib.auth.forms import (UserCreationForm, UserChangeForm,
-                                       AdminPasswordChangeForm, PasswordChangeForm)
+                                       AdminPasswordChangeForm, PasswordChangeForm,
+                                       UsernameField)
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
@@ -57,9 +58,16 @@ class GroupAdmin(object):
         return attrs
 
 
+class UserCreateForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ("username", "realname")
+        field_classes = {'username': UsernameField}
+
+
 class UserAdmin(object):
     change_user_password_template = None
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff')
+    list_display = ('username', 'email', 'realname', 'is_staff')
     list_filter = ('is_staff', 'is_superuser', 'is_active')
     search_fields = ('username', 'first_name', 'last_name', 'email')
     ordering = ('username',)
@@ -75,7 +83,8 @@ class UserAdmin(object):
 
     def get_model_form(self, **kwargs):
         if self.org_obj is None:
-            self.form = UserCreationForm
+            # self.form = UserCreationForm
+            self.form = UserCreateForm
         else:
             self.form = UserChangeForm
         return super(UserAdmin, self).get_model_form(**kwargs)
