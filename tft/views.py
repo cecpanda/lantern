@@ -571,6 +571,9 @@ class OrderViewSet(ListModelMixin,
         audits_list = []
         rejects_list = []
         closed_list = []
+        r_audits_list = []
+        r_rejects_list = []
+        r_closed_list = []
         finished_list = []
         """
         groups: ['CVD', 'MFG', 'PVD',]
@@ -604,16 +607,18 @@ class OrderViewSet(ListModelMixin,
                 audits = Order.objects.filter(group=group, status__in=['1', '2']).count()
                 rejects = Order.objects.filter(group=group, status='3').count()
                 closed = Order.objects.filter(group=group, status='4').count()
-                finished = Order.objects.filter(group=group, status='9').count()
+
                 # try:
                 #     rate = '{:.2%}'.format(finished / sum)
                 # except ZeroDivisionError as e:
                 #     rate = '{:.2%}'.format(0)
                 r_audits = Order.objects.filter(group=group, status__in=[5, 6])\
-                                        .exclude(flows__flow__in=[8 ,9]).count()
+                                        .exclude(flows__flow__in=[8 ,9]).distinct().count()
                 r_rejects = Order.objects.filter(group=group, status=7)\
-                                                .exclude(flows__flow__in=[8, 9]).count()
-                r_closed = Order.objects.filter(group=group, flows__flow=8).exclude(flows__flow=9)
+                                                .exclude(flows__flow__in=[8, 9]).distinct().count()
+                r_closed = Order.objects.filter(group=group, flows__flow=8)\
+                                                .exclude(flows__flow=9).distinct().count()
+                finished = Order.objects.filter(group=group, status='9').count()
 
                 data['groups'].append(group.name)
                 data['table'].append({
@@ -622,6 +627,9 @@ class OrderViewSet(ListModelMixin,
                     'audits': audits,
                     'rejects': rejects,
                     'closed': closed,
+                    'r_audits': r_audits,
+                    'r_rejects': r_rejects,
+                    'r_closed': r_closed,
                     'finished': finished
                 })
                 if sum > 0:
@@ -638,6 +646,12 @@ class OrderViewSet(ListModelMixin,
                 audits = Order.objects.filter(charge_group=group, status__in=['1', '2']).count()
                 rejects = Order.objects.filter(charge_group=group, status='3').count()
                 closed = Order.objects.filter(charge_group=group, status='4').count()
+                r_audits = Order.objects.filter(charge_group=group, status__in=[5, 6]) \
+                    .exclude(flows__flow__in=[8, 9]).distinct().count()
+                r_rejects = Order.objects.filter(charge_group=group, status=7) \
+                    .exclude(flows__flow__in=[8, 9]).distinct().count()
+                r_closed = Order.objects.filter(charge_group=group, flows__flow=8) \
+                    .exclude(flows__flow=9).distinct().count()
                 finished = Order.objects.filter(charge_group=group, status='9').count()
                 # try:
                 #     rate = '{:.2%}'.format(finished / sum)
@@ -650,6 +664,9 @@ class OrderViewSet(ListModelMixin,
                     'audits': audits,
                     'rejects': rejects,
                     'closed': closed,
+                    'r_audits': r_audits,
+                    'r_rejects': r_rejects,
+                    'r_closed': r_closed,
                     'finished': finished,
                 })
                 if sum > 0:
@@ -659,13 +676,19 @@ class OrderViewSet(ListModelMixin,
                 audits_list.append(audits)
                 rejects_list.append(rejects)
                 closed_list.append(closed)
+                r_audits_list.append(r_audits)
+                r_rejects_list.append(r_rejects)
+                r_closed_list.append(r_closed)
                 finished_list.append(finished)
 
         data['bar'].append({'name': '停机单数', 'type': 'bar', 'data': sum_list})
         data['bar'].append({'name': '停机审核中', 'type': 'bar', 'stack': 'a', 'data': audits_list})
         data['bar'].append({'name': '停机拒签', 'type': 'bar', 'stack': 'a', 'data': rejects_list})
         data['bar'].append({'name': '停机完成', 'type': 'bar', 'stack': 'a', 'data': closed_list})
-        data['bar'].append({'name': '已复机', 'type': 'bar', 'stack': 'a', 'data': finished_list})
+        data['bar'].append({'name': '复机审核中', 'type': 'bar', 'stack': 'a', 'data': r_audits_list})
+        data['bar'].append({'name': '复机拒签', 'type': 'bar', 'stack': 'a', 'data': r_rejects_list})
+        data['bar'].append({'name': '部分复机完成', 'type': 'bar', 'stack': 'a', 'data': r_closed_list})
+        data['bar'].append({'name': '全部复机完成', 'type': 'bar', 'stack': 'a', 'data': finished_list})
 
         return Response(data=data)
 
@@ -685,10 +708,12 @@ class OrderViewSet(ListModelMixin,
             audits_list = []
             rejects_list = []
             closed_list = []
+            r_audits_list = []
+            r_rejects_list = []
+            r_closed_list = []
             finished_list = []
-            others_list = []
             data = {
-                'groups': [],
+                'groups': [group.name for group in Group.objects.all()],
                 'table': [],
                 'bar': [],
                 'pie': []
@@ -697,21 +722,30 @@ class OrderViewSet(ListModelMixin,
                 groups.add(order.charge_group)
 
             for group in groups:
-                sum = queryset.filter(charge_group=group).count()
-                audits = queryset.filter(charge_group=group, status__in=['1', '2']).count()
-                rejects = queryset.filter(charge_group=group, status='3').count()
-                closed = queryset.filter(charge_group=group, status='4').count()
-                finished = queryset.filter(charge_group=group, status='9').count()
-                others = queryset.filter(charge_group=group, status__in=['0', '5', '6', '7', '8']).count()
-                data['groups'].append(group.name)
+                sum = Order.objects.filter(charge_group=group).count()
+                audits = Order.objects.filter(charge_group=group, status__in=['1', '2']).count()
+                rejects = Order.objects.filter(charge_group=group, status='3').count()
+                closed = Order.objects.filter(charge_group=group, status='4').count()
+                r_audits = Order.objects.filter(charge_group=group, status__in=[5, 6]) \
+                    .exclude(flows__flow__in=[8, 9]).distinct().count()
+                r_rejects = Order.objects.filter(charge_group=group, status=7) \
+                    .exclude(flows__flow__in=[8, 9]).distinct().count()
+                r_closed = Order.objects.filter(charge_group=group, flows__flow=8) \
+                    .exclude(flows__flow=9).distinct().count()
+                finished = Order.objects.filter(charge_group=group, status='9').count()
+
+                # data['groups'].append(group.name)
+
                 data['table'].append({
                     'group': group.name,
                     'sum': sum,
                     'audits': audits,
                     'rejects': rejects,
                     'closed': closed,
+                    'r_audits': r_audits,
+                    'r_rejects': r_rejects,
+                    'r_closed': r_closed,
                     'finished': finished,
-                    'others': others
                 })
                 if sum > 0:
                     data['pie'].append({'value': sum, 'name': group.name})
@@ -720,15 +754,19 @@ class OrderViewSet(ListModelMixin,
                 audits_list.append(audits)
                 rejects_list.append(rejects)
                 closed_list.append(closed)
+                r_audits_list.append(r_audits)
+                r_rejects_list.append(r_rejects)
+                r_closed_list.append(r_closed)
                 finished_list.append(finished)
-                others_list.append(others)
 
             data['bar'].append({'name': '停机单数', 'type': 'bar', 'data': sum_list})
             data['bar'].append({'name': '停机审核中', 'type': 'bar', 'stack': 'a', 'data': audits_list})
             data['bar'].append({'name': '停机拒签', 'type': 'bar', 'stack': 'a', 'data': rejects_list})
             data['bar'].append({'name': '停机完成', 'type': 'bar', 'stack': 'a', 'data': closed_list})
-            data['bar'].append({'name': '已复机', 'type': 'bar', 'stack': 'a', 'data': finished_list})
-            data['bar'].append({'name': '其他', 'type': 'bar', 'stack': 'a', 'data': others_list})
+            data['bar'].append({'name': '复机审核中', 'type': 'bar', 'stack': 'a', 'data': r_audits_list})
+            data['bar'].append({'name': '复机拒签', 'type': 'bar', 'stack': 'a', 'data': r_rejects_list})
+            data['bar'].append({'name': '部分复机完成', 'type': 'bar', 'stack': 'a', 'data': r_closed_list})
+            data['bar'].append({'name': '全部复机完成', 'type': 'bar', 'stack': 'a', 'data': finished_list})
 
             return Response(data=data)
 
