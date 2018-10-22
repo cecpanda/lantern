@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6d756093-487a-4ae3-903e-ca3d8b6b87dc" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tft/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/tft/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tft/templates/tft/.~lock.summary.xlsx#" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tft/templates/tft/summary.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/tft/templates/tft/summary.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tft/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/tft/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -41,7 +37,7 @@
       <file leaf-file-name="order.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tft/models/order.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
+            <state relative-caret-position="-2095">
               <caret line="36" column="22" selection-start-line="36" selection-start-column="22" selection-end-line="36" selection-end-column="22" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
@@ -50,7 +46,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="serializers.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="serializers.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tft/serializers.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="324">
@@ -62,20 +58,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tft/urls.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="14" column="61" selection-start-line="14" selection-start-column="56" selection-end-line="14" selection-end-column="61" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tft/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="386">
-              <caret line="373" column="51" selection-start-line="373" selection-start-column="51" selection-end-line="373" selection-end-column="51" />
+            <state relative-caret-position="186">
+              <caret line="363" column="125" selection-start-line="363" selection-start-column="125" selection-end-line="363" selection-end-column="125" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -194,8 +181,8 @@
         <option value="$PROJECT_DIR$/tft/models/flow.py" />
         <option value="$PROJECT_DIR$/tft/adminx.py" />
         <option value="$PROJECT_DIR$/tft/utils.py" />
-        <option value="$PROJECT_DIR$/tft/views.py" />
         <option value="$PROJECT_DIR$/tft/serializers.py" />
+        <option value="$PROJECT_DIR$/tft/views.py" />
       </list>
     </option>
   </component>
@@ -209,8 +196,8 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="186" />
-    <option name="y" value="29" />
+    <option name="x" value="65" />
+    <option name="y" value="38" />
     <option name="width" value="1387" />
     <option name="height" value="846" />
   </component>
@@ -233,13 +220,12 @@
             <path>
               <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
               <item name="lantern" type="462c0819:PsiDirectoryNode" />
-              <item name="tft" type="462c0819:PsiDirectoryNode" />
+              <item name="extra_apps" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
               <item name="lantern" type="462c0819:PsiDirectoryNode" />
               <item name="tft" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
@@ -379,7 +365,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="186" y="29" width="1387" height="846" extended-state="0" />
+    <frame x="65" y="38" width="1387" height="846" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -389,7 +375,7 @@
       <window_info anchor="bottom" id="Python Console" order="10" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.52216065" />
       <window_info anchor="bottom" id="Terminal" order="11" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13770728" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13842826" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="4" weight="0.329303" />
       <window_info anchor="right" id="SciView" order="3" />
@@ -439,13 +425,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="580">
-          <caret line="122" column="9" selection-start-line="122" selection-start-column="9" selection-end-line="122" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/extra_apps/rest_framework/response.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="224">
@@ -683,16 +662,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tft/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1148">
-          <caret line="39" column="49" selection-start-line="39" selection-start-column="49" selection-end-line="39" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#30#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/extra_apps/rest_framework/mixins.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="251">
@@ -707,22 +676,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tft/models/order.py">
+    <entry file="file://$PROJECT_DIR$/extra_apps/rest_framework/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="36" column="22" selection-start-line="36" selection-start-column="22" selection-end-line="36" selection-end-column="22" />
+        <state relative-caret-position="-7428">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
           <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tft/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="386">
-          <caret line="373" column="51" selection-start-line="373" selection-start-column="51" selection-end-line="373" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#177#216#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -733,6 +692,36 @@
           <caret line="80" column="39" lean-forward="true" selection-start-line="80" selection-start-column="39" selection-end-line="80" selection-end-column="39" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tft/models/order.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2095">
+          <caret line="36" column="22" selection-start-line="36" selection-start-column="22" selection-end-line="36" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tft/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1148">
+          <caret line="39" column="49" selection-start-line="39" selection-start-column="49" selection-end-line="39" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tft/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="186">
+          <caret line="363" column="125" selection-start-line="363" selection-start-column="125" selection-end-line="363" selection-end-column="125" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>

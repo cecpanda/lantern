@@ -356,16 +356,12 @@ class RecoverOrderViewSet(CreateModelMixin,
             if group.name == 'MFG':
                 is_mfg = True
 
-        print('=' * 10)
-        print(is_qc, is_mfg)
-        print('=' * 10)
-
         if is_qc and not is_mfg:
-            orders = self.queryset.filter(order__status=5).distinct()
+            orders = self.queryset.filter(order__status=5, audit__qc_signer=None).distinct()
         elif not is_qc and is_mfg:
-            orders = self.queryset.filter(order__status=6).distinct()
+            orders = self.queryset.filter(order__status=6, audit__p_signer=None).distinct()
         elif is_qc and is_mfg:
-            orders = self.queryset.filter(Q(order__status=5) | Q(order__status=6)).distinct()
+            orders = self.queryset.filter(Q(order__status=5, audit__qc_signer=None) | Q(order__status=6, audit__p_signer=None)).distinct()
         else:
             orders = []
 
