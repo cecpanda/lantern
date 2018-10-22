@@ -5,3 +5,4 @@ from .order import ID, Order, Audit, \
                    Report, Remark
 from .shortcut import Shortcut, ShortcutContent
 from .flow import OrderFlow
+from .mark import Mark

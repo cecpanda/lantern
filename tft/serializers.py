@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
-from .models import Order, ID, Report, Remark, Audit, RecoverOrder, RecoverAudit, Shortcut, ShortcutContent
+from .models import Order, ID, Report, Remark, Audit, RecoverOrder, RecoverAudit, Shortcut, ShortcutContent, Mark
 from account.serializers import UserOfGroupSerializer, GroupSerializer
 from account.models import GroupSetting
 
@@ -1110,3 +1110,11 @@ class ListRecoverOrderSerializer(serializers.ModelSerializer):
 class ExportSerializer(serializers.Serializer):
     ids = serializers.ListField(label='开单编号', child=serializers.CharField(), min_length=1)
     format = serializers.ChoiceField(label='格式', choices=('csv', 'xls', 'xlsx', 'chart'))
+
+
+class MarkSerializer(serializers.ModelSerializer):
+    group = GroupSerializer()
+
+    class Meta:
+        model = Mark
+        fields = ('group', 'mark')

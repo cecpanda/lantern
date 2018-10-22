@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import StartOrderViewSet, AuditViewSet, RecoverOrderViewSet, RecoverAuditViewSet, \
                    RemarkViewSet, ShortcutViewSet, \
-                   OrderViewSet
+                   OrderViewSet, MarkViewSet
 
 
 router = DefaultRouter()
@@ -14,6 +14,7 @@ router.register('order/recover-audit', RecoverAuditViewSet, base_name='recover-a
 router.register('order/remark', RemarkViewSet, base_name='remark')
 router.register('order/query', OrderViewSet, base_name='order')
 router.register('order/shortcut', ShortcutViewSet, base_name='shortcut')
+router.register('order/marks', MarkViewSet, base_name='mark')
 
 app_name = 'tft'
 

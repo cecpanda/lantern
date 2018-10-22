@@ -33,14 +33,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from account.models import GroupSetting
 from action.utils import create_action
-from .models import Order, Audit, RecoverOrder, RecoverAudit, Remark, Shortcut, OrderFlow
+from .models import Order, Audit, RecoverOrder, RecoverAudit, Remark, Shortcut, OrderFlow, Mark
 from .serializers import StartOrderSerializer, RetrieveStartOrderSerializer, \
                          ProductAuditSerializer, ChargeAuditSerializer, \
                          ListRecoverOrderSerializer, RecoverOrderSerializer, UpdateRecoverOrderSerializer, \
                          QcRecoverAuditSerializer, ProductRecoverAuditSerializer, \
                          RemarkSerializer, CreateRemarkSerializer, \
                          OrderSerializer, ShortcutSerializer, \
-                         ExportSerializer
+                         ExportSerializer, MarkSerializer
 # from .serializers import (StartOrderSerializer, RetrieveStartOrderSerializer,
 #                           ProductAuditSerializer, ChargeAuditSerializer,
 #                           ListRecoverOrderSerializer, RecoverOrderSerializer, UpdateRecoverOrderSerializer,
@@ -634,6 +634,8 @@ class OrderViewSet(ListModelMixin,
         r_rejects_list = []
         r_closed_list = []
         finished_list = []
+        not_list = []
+        mark_list = []
         """
         groups: ['CVD', 'MFG', 'PVD',]
         table: [
@@ -657,7 +659,8 @@ class OrderViewSet(ListModelMixin,
             'groups': [],
             'table': [],
             'bar': [],
-            'pie': []
+            'pie': [],
+            'line': []
         }
 
         if which == 'group':
@@ -678,7 +681,10 @@ class OrderViewSet(ListModelMixin,
                 r_closed = Order.objects.filter(group=group, flows__flow=8)\
                                                 .exclude(flows__flow=9).distinct().count()
                 finished = Order.objects.filter(group=group, status='9').count()
-
+                try:
+                    mark = Mark.objects.get(group=group).mark
+                except:
+                    mark = None
                 data['groups'].append(group.name)
                 data['table'].append({
                     'group': group.name,
@@ -699,6 +705,8 @@ class OrderViewSet(ListModelMixin,
                 rejects_list.append(rejects)
                 closed_list.append(closed)
                 finished_list.append(finished)
+                not_list.append(sum - finished)
+                mark_list.append(mark)
         elif which == 'charge_group':
             for group in groups:
                 sum = Order.objects.filter(charge_group=group).count()
@@ -712,6 +720,10 @@ class OrderViewSet(ListModelMixin,
                 r_closed = Order.objects.filter(charge_group=group, flows__flow=8) \
                     .exclude(flows__flow=9).distinct().count()
                 finished = Order.objects.filter(charge_group=group, status='9').count()
+                try:
+                    mark = Mark.objects.get(group=group).mark
+                except:
+                    mark = 0
                 # try:
                 #     rate = '{:.2%}'.format(finished / sum)
                 # except ZeroDivisionError as e:
@@ -739,6 +751,8 @@ class OrderViewSet(ListModelMixin,
                 r_rejects_list.append(r_rejects)
                 r_closed_list.append(r_closed)
                 finished_list.append(finished)
+                not_list.append(sum - finished)
+                mark_list.append(mark)
 
         data['bar'].append({'name': '停机单数', 'type': 'bar', 'data': sum_list})
         data['bar'].append({'name': '停机审核中', 'type': 'bar', 'stack': 'a', 'data': audits_list})
@@ -748,6 +762,8 @@ class OrderViewSet(ListModelMixin,
         data['bar'].append({'name': '复机拒签', 'type': 'bar', 'stack': 'a', 'data': r_rejects_list})
         data['bar'].append({'name': '部分复机完成', 'type': 'bar', 'stack': 'a', 'data': r_closed_list})
         data['bar'].append({'name': '全部复机完成', 'type': 'bar', 'stack': 'a', 'data': finished_list})
+        data['line'].append({'name': '未复机数', 'type': 'bar', 'data': not_list})
+        data['line'].append({'name': '标记值', 'type': 'line', 'data': mark_list})
 
         return Response(data=data)
 
@@ -1241,3 +1257,8 @@ class OrderViewSet(ListModelMixin,
         url = request.build_absolute_uri(
             api_settings.UPLOADED_FILES_USE_PREFIX + settings.MEDIA_URL + 'xlsx/detail/' + name)
         return Response({'url': url})
+
+
+class MarkViewSet(ListModelMixin, GenericViewSet):
+    queryset = Mark.objects.all()
+    serializer_class = MarkSerializer

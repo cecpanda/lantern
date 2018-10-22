@@ -4,7 +4,8 @@ from .models import ID, Order, Audit, \
                     RecoverOrder, RecoverAudit, \
                     Report, Remark, \
                     Shortcut, ShortcutContent, \
-                    OrderFlow
+                    OrderFlow, \
+                    Mark
 
 #
 # class EqKindAdmin(object):
@@ -45,6 +46,10 @@ class ShortcutContentAdmin(object):
     list_display = ('name', 'content')
 
 
+class MarkAdmin(object):
+    list_display = ('group', 'mark')
+
+
 class OrderFlowAdmin(object):
     list_display = ('order', 'flow', 'created')
 
@@ -57,5 +62,6 @@ xadmin.site.register(Report)
 xadmin.site.register(Remark)
 # xadmin.site.register(Shortcut, ShortcutAdmin)
 xadmin.site.register(ShortcutContent, ShortcutContentAdmin)
+xadmin.site.register(Mark, MarkAdmin)
 xadmin.site.register(OrderFlow, OrderFlowAdmin)
 xadmin.site.register(ID)
