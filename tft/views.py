@@ -343,6 +343,40 @@ class RecoverOrderViewSet(CreateModelMixin,
 
         return Response(ids)
 
+    @action(methods=['GET'], detail=False, url_path='tu-recover-audit', url_name='to_recover_audit')
+    def to_recover_audit(self, request):
+        user = request.user
+        groups = user.groups.all()
+
+        is_qc = False
+        is_mfg = False
+        for group in groups:
+            if group.name == 'QC':
+                is_qc = True
+            if group.name == 'MFG':
+                is_mfg = True
+
+        print('=' * 10)
+        print(is_qc, is_mfg)
+        print('=' * 10)
+
+        if is_qc and not is_mfg:
+            orders = self.queryset.filter(order__status=5).distinct()
+        elif not is_qc and is_mfg:
+            orders = self.queryset.filter(order__status=6).distinct()
+        elif is_qc and is_mfg:
+            orders = self.queryset.filter(Q(order__status=5) | Q(order__status=6)).distinct()
+        else:
+            orders = []
+
+        page = self.paginate_queryset(orders)
+        if page is not None:
+            serializer = ListRecoverOrderSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(orders, many=True)
+        return Response(serializer.data)
+
 
 
 class RecoverAuditViewSet(GenericViewSet):
@@ -446,6 +480,35 @@ class OrderViewSet(ListModelMixin,
         if self.action == 'export':
             return ExportSerializer
         return self.serializer_class
+
+    def get_permissions(self):
+        if self.action == 'to_audit':
+            return [IsAuthenticated(),]
+        return [permission() for permission in self.permission_classes]
+
+    @action(methods=['GET'], detail=False, url_path='tu-audit', url_name='to_audit')
+    def to_audit(self, request):
+        user = request.user
+        groups = user.groups.all()
+
+        is_mfg = False
+        for group in groups:
+            if group.name == 'MFG':
+                is_mfg = True
+
+        if is_mfg:
+            orders = self.queryset.filter(status=1)
+        else:
+            orders = self.queryset.filter(charge_group__in=groups, status=2)
+
+        page = self.paginate_queryset(orders)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(orders, many=True)
+        return Response(serializer.data)
+
 
     @action(methods=['GET'], detail=False, url_path='status-flow', url_name='status_flow')
     def status_flow(self, request):

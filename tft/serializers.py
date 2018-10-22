@@ -41,32 +41,6 @@ class StartOrderSerializer(serializers.ModelSerializer):
                   'reports', 'remark')
         read_only_fields = ('id', 'status')
 
-    # 改成字符串了
-    # def validate_eq(self, value):
-    #     # 是否已定义
-    #     # 转换为大写
-    #     # 去重
-    #     # 同一科室
-    #     try:
-    #         first_charge_group = Eq.objects.get(name=value[0].upper()).kind.group
-    #     except:
-    #         raise serializers.ValidationError(f'{value[0]} 没有定义或没有对应的科室')
-    #
-    #     for name in value:
-    #         name = name.upper()
-    #         try:
-    #             Eq.objects.get(name=name)
-    #         except Eq.DoesNotExist:
-    #             raise serializers.ValidationError(f'{name} is not defined.')
-    #         try:
-    #             charge_group = Eq.objects.get(name=name).kind.group
-    #         except:
-    #             raise serializers.ValidationError(f'{name} 未定义科室')
-    #
-    #         if charge_group != first_charge_group:
-    #             raise serializers.ValidationError(f'{name} 与其他设备不属同一科室')
-    #
-    #     return set([name.upper() for name in value])
 
     def validate_charge_group(self, value):
         try:
@@ -105,7 +79,7 @@ class StartOrderSerializer(serializers.ModelSerializer):
 
         while True:
             id = ID.objects.create().id
-            if not Order.objects.filter(id__icontains=id).exists():
+            if not Order.objects.filter(id__endswith=id).exists():
                 break
         try:
             code = group.settings.code
@@ -1027,7 +1001,6 @@ class AuditSerializer(serializers.ModelSerializer):
         if not ret.get('c_signer'):
             ret['c_signer'] = {}
         return ret
-
 
 
 class QueryRecoverAuditSerializer(serializers.ModelSerializer):
