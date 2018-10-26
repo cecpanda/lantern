@@ -121,3 +121,7 @@ yarn-error.log*
 *.sln
 
 # lantern
+*/__pycache__/
+account/migrations/
+tft/migrations/
+action/migrations/

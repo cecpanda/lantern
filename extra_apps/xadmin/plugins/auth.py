@@ -61,13 +61,13 @@ class GroupAdmin(object):
 class UserCreateForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ("username", "realname")
+        fields = ("username", "realname", 'groups')
         field_classes = {'username': UsernameField}
 
 
 class UserAdmin(object):
     change_user_password_template = None
-    list_display = ('username', 'email', 'realname', 'is_staff')
+    list_display = ('username', 'realname', 'groups', 'is_active', 'is_staff')
     list_filter = ('is_staff', 'is_superuser', 'is_active')
     search_fields = ('username', 'first_name', 'last_name', 'email')
     ordering = ('username',)
