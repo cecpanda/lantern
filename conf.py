@@ -4,7 +4,7 @@ Gunicorn config
 
 import multiprocessing
 
-bind = "10.53.145.255:8000"
+bind = "10.53.141.255:8000"
 
 workers = multiprocessing.cpu_count() * 2 + 1
 
@@ -15,6 +15,8 @@ accesslog = './gunicorn_acess.log'
 errorlog = './gunicorn_error.log'
 
 loglevel = 'info'
+
+timeout = 120
 
 
 '''
