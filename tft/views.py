@@ -29,6 +29,7 @@ from rest_framework.permissions import IsAuthenticated, \
 from rest_framework.decorators import action
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework_extensions.cache.mixins import CacheResponseMixin
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.models import GroupSetting
@@ -456,10 +457,10 @@ class ShortcutViewSet(ListModelMixin, GenericViewSet):
     serializer_class = ShortcutSerializer
 
 
-class OrderViewSet(ListModelMixin,
+class OrderViewSet(CacheResponseMixin, ListModelMixin,
                    RetrieveModelMixin,
                    GenericViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.prefetch_related('recoverorders', 'recoverorders__audit', 'reports', 'remarks')
     serializer_class = OrderSerializer
     authentication_classes = [JSONWebTokenAuthentication, SessionAuthentication]
     pagination_class = OrderPagination
@@ -767,15 +768,11 @@ class OrderViewSet(ListModelMixin,
 
         return Response(data=data)
 
-    @action(methods=['POST'], detail=False, url_path='export', url_name='export')
+    @action(methods=['get'], detail=False, url_path='export', url_name='export')
     def export(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        format = request.query_params.get('fmt', 'chart')
 
-        ids = serializer.validated_data.get('ids')
-        format = serializer.validated_data.get('format')
-        queryset = Order.objects.filter(id__in=ids)
-        s = OrderSerializer(queryset, many=True, context={'request': request})
+        queryset = self.filter_queryset(self.get_queryset())
 
         if format == 'chart':
             groups = set()
@@ -797,17 +794,17 @@ class OrderViewSet(ListModelMixin,
                 groups.add(order.charge_group)
 
             for group in groups:
-                sum = Order.objects.filter(charge_group=group).count()
-                audits = Order.objects.filter(charge_group=group, status__in=['1', '2']).count()
-                rejects = Order.objects.filter(charge_group=group, status='3').count()
-                closed = Order.objects.filter(charge_group=group, status='4').count()
-                r_audits = Order.objects.filter(charge_group=group, status__in=[5, 6]) \
+                sum = queryset.filter(charge_group=group).count()
+                audits = queryset.filter(charge_group=group, status__in=['1', '2']).count()
+                rejects = queryset.filter(charge_group=group, status='3').count()
+                closed = queryset.filter(charge_group=group, status='4').count()
+                r_audits = queryset.filter(charge_group=group, status__in=[5, 6]) \
                     .exclude(flows__flow__in=[8, 9]).distinct().count()
-                r_rejects = Order.objects.filter(charge_group=group, status=7) \
+                r_rejects = queryset.filter(charge_group=group, status=7) \
                     .exclude(flows__flow__in=[8, 9]).distinct().count()
-                r_closed = Order.objects.filter(charge_group=group, flows__flow=8) \
+                r_closed = queryset.filter(charge_group=group, flows__flow=8) \
                     .exclude(flows__flow=9).distinct().count()
-                finished = Order.objects.filter(charge_group=group, status='9').count()
+                finished = queryset.filter(charge_group=group, status='9').count()
 
                 # data['groups'].append(group.name)
 
@@ -846,6 +843,7 @@ class OrderViewSet(ListModelMixin,
             return Response(data=data)
 
         elif format == 'csv':
+            s = OrderSerializer(queryset, many=True, context={'request': request})
             data = [dict(row) for row in s.data]
 
             # return HttpResponseRedirect(reverse('tft:order-exporting'))
@@ -882,6 +880,7 @@ class OrderViewSet(ListModelMixin,
                 api_settings.UPLOADED_FILES_USE_PREFIX + settings.MEDIA_URL + 'csv/' + name)
             return Response({'url': url})
         else:
+            s = OrderSerializer(queryset, many=True, context={'request': request})
             data = []
             for row in s.data:
                 item = OrderedDict()

@@ -62,7 +62,7 @@ class Order(models.Model):
     # 设备对应关系都不需要了，鬼鬼，垃圾系统
     # eq = models.ManyToManyField(Eq, related_name='startorders', verbose_name='停机设备')
     eq = models.CharField('停机设备', max_length=50)
-    kind = models.CharField('停机机种', max_length=30)
+    kind = models.CharField('停机机种', max_length=70)
     step = models.CharField('停机站点', max_length=50)
 
     reason = models.TextField('停机原因', max_length=100)
@@ -135,7 +135,7 @@ class RecoverOrder(models.Model):
     partial = models.BooleanField('部分复机', default=False)
     # eq = models.ManyToManyField(Eq, related_name='+', verbose_name='部分复机设备')
     eq = models.CharField('部分复机设备', max_length=50, blank=True, null=True)
-    kind = models.CharField('部分复机机种', max_length=30, blank=True, null=True)
+    kind = models.CharField('部分复机机种', max_length=70, blank=True, null=True)
     step = models.CharField('部分复机站点', max_length=50, blank=True, null=True)
 
     class Meta:
