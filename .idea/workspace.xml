@@ -3,20 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="6d756093-487a-4ae3-903e-ca3d8b6b87dc" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/account/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/account/migrations/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/default.sqlite3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lantern/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/lantern/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/media/xlsx/.gitkeep" beforeDir="false" afterPath="$PROJECT_DIR$/media/xlsx/.gitkeep" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/media/xlsx/78mWEj2.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/media/xlsx/G5eqZTA.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/media/xlsx/detail/.gitkeep" beforeDir="false" afterPath="$PROJECT_DIR$/media/xlsx/detail/.gitkeep" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/media/xlsx/detail/l0C39fQ.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/media/xlsx/fNemxos.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tft/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tft/migrations/0002_auto_20181030_1634.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tft/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/account/management/commands/backup.py" beforeDir="false" afterPath="$PROJECT_DIR$/account/management/commands/backup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backup.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/backup.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/default.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/default.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tft/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/tft/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -51,8 +40,8 @@
       <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lantern/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1526">
-              <caret line="178" column="11" lean-forward="true" selection-start-line="178" selection-start-column="11" selection-end-line="178" selection-end-column="11" />
+            <state relative-caret-position="140">
+              <caret line="40" column="34" selection-start-line="40" selection-start-column="34" selection-end-line="40" selection-end-column="34" />
               <folding>
                 <element signature="e#308#317#0" expanded="true" />
               </folding>
@@ -60,31 +49,61 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".gitkeep" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/media/xlsx/.gitkeep">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/contrib/admin/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="3" selection-start-line="3" selection-end-line="3" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitkeep" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/media/xlsx/detail/.gitkeep">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="3" selection-start-line="3" selection-end-line="3" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tft/views.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-300">
-              <caret line="1219" column="96" selection-start-line="1219" selection-start-column="96" selection-end-line="1219" selection-end-column="96" />
+            <state relative-caret-position="372">
+              <caret line="40" column="3" selection-start-line="40" selection-start-column="3" selection-end-line="40" selection-end-column="3" />
               <folding>
-                <element signature="e#0#9#0" expanded="true" />
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="base.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/core/management/base.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="365">
+              <caret line="275" column="6" selection-start-line="275" selection-start-column="6" selection-end-line="275" selection-end-column="6" />
+              <folding>
+                <element signature="e#135#144#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="flush.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/core/management/commands/flush.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-490">
+              <caret line="22" column="71" selection-start-line="22" selection-start-column="71" selection-end-line="22" selection-end-column="71" />
+              <folding>
+                <element signature="e#0#35#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="migrate.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/core/management/commands/migrate.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2520">
+              <caret line="18" column="23" selection-start-line="18" selection-start-column="23" selection-end-line="18" selection-end-column="23" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="backup.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/account/management/commands/backup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1086">
+              <caret line="89" column="30" selection-start-line="89" selection-start-column="30" selection-end-line="89" selection-end-column="30" />
+              <folding>
+                <element signature="e#40#83#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -102,7 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>unique</find>
       <find>exception</find>
       <find>QUERY_TERMS</find>
       <find>login</find>
@@ -131,6 +149,8 @@
       <find>get_permissions</find>
       <find>UserCreateForm</find>
       <find>dumpdata</find>
+      <find>warnings</find>
+      <find>interactive</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/extra_apps/xadmin</dir>
@@ -143,7 +163,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/action/serializers.py" />
         <option value="$PROJECT_DIR$/templates/admin/base_site.html" />
         <option value="$PROJECT_DIR$/account/admin.py" />
         <option value="$PROJECT_DIR$/extra_apps/xadmin/adminx.py" />
@@ -189,11 +208,12 @@
         <option value="$PROJECT_DIR$/conf.py" />
         <option value="$PROJECT_DIR$/account/management/commands/_private.py" />
         <option value="$PROJECT_DIR$/account/management/commands/start.py" />
-        <option value="$PROJECT_DIR$/account/management/commands/backup.py" />
-        <option value="$PROJECT_DIR$/lantern/settings.py" />
-        <option value="$PROJECT_DIR$/tft/views.py" />
         <option value="$PROJECT_DIR$/media/xlsx/.gitkeep" />
         <option value="$PROJECT_DIR$/media/xlsx/detail/.gitkeep" />
+        <option value="$PROJECT_DIR$/tft/views.py" />
+        <option value="$PROJECT_DIR$/lantern/settings.py" />
+        <option value="$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/core/management/base.py" />
+        <option value="$PROJECT_DIR$/account/management/commands/backup.py" />
       </list>
     </option>
   </component>
@@ -207,8 +227,8 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="90" />
-    <option name="y" value="23" />
+    <option name="x" value="228" />
+    <option name="y" value="54" />
     <option name="width" value="1387" />
     <option name="height" value="846" />
   </component>
@@ -227,29 +247,6 @@
             <path>
               <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
               <item name="lantern" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
-              <item name="lantern" type="462c0819:PsiDirectoryNode" />
-              <item name="account" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
-              <item name="lantern" type="462c0819:PsiDirectoryNode" />
-              <item name="media" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
-              <item name="lantern" type="462c0819:PsiDirectoryNode" />
-              <item name="media" type="462c0819:PsiDirectoryNode" />
-              <item name="xlsx" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
-              <item name="lantern" type="462c0819:PsiDirectoryNode" />
-              <item name="media" type="462c0819:PsiDirectoryNode" />
-              <item name="xlsx" type="462c0819:PsiDirectoryNode" />
-              <item name="detail" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
@@ -283,6 +280,41 @@
               <item name="&lt; Python 3.7 (lantern) &gt;" type="70bed36:NamedLibraryElementNode" />
               <item name="site-packages" type="462c0819:PsiDirectoryNode" />
               <item name="django" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.7 (lantern) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
+              <item name="django" type="462c0819:PsiDirectoryNode" />
+              <item name="contrib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.7 (lantern) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
+              <item name="django" type="462c0819:PsiDirectoryNode" />
+              <item name="contrib" type="462c0819:PsiDirectoryNode" />
+              <item name="admin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.7 (lantern) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
+              <item name="django" type="462c0819:PsiDirectoryNode" />
+              <item name="contrib" type="462c0819:PsiDirectoryNode" />
+              <item name="contenttypes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.7 (lantern) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
+              <item name="django" type="462c0819:PsiDirectoryNode" />
+              <item name="contrib" type="462c0819:PsiDirectoryNode" />
+              <item name="sessions" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="lantern" type="b2602c69:ProjectViewProjectNode" />
@@ -410,7 +442,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="90" y="23" width="1387" height="846" extended-state="0" />
+    <frame x="297" y="54" width="1387" height="846" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -420,14 +452,14 @@
       <window_info anchor="bottom" id="Python Console" order="10" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.521262" />
       <window_info anchor="bottom" id="Terminal" order="11" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14203316" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1744773" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="4" weight="0.329303" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.64746225" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.6460905" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -466,7 +498,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="160" />
+      <option name="time" value="161" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Python.DjangoServer">
@@ -475,61 +507,10 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/tft/apps.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tft/signals/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tft/signals/handlers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="7" column="43" lean-forward="true" selection-start-line="7" selection-start-column="43" selection-end-line="7" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tft/models/flow.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="15" column="44" selection-start-line="15" selection-start-column="44" selection-end-line="15" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/extra_apps/rest_framework/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7428">
-          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tft/models/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="7" column="22" selection-start-line="7" selection-start-column="22" selection-end-line="7" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tft/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="16" column="28" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/account/serializers.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/gunicorn_acess.log">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/gunicorn_error.log">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tft/models/lot.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/tft/models/eq.py">
@@ -733,52 +714,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/core/management/commands/dumpdata.py">
+    <entry file="file://$PROJECT_DIR$/media/xlsx/detail/.gitkeep">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2126">
-          <caret line="174" column="25" selection-start-line="174" selection-start-column="17" selection-end-line="174" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/account/management/commands/backup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="14" column="39" lean-forward="true" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#62#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/core/management/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="129">
-          <caret line="274" column="69" lean-forward="true" selection-start-line="274" selection-start-column="69" selection-end-line="274" selection-end-column="69" />
-          <folding>
-            <element signature="e#135#144#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="60">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tft/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-300">
-          <caret line="1219" column="96" selection-start-line="1219" selection-start-column="96" selection-end-line="1219" selection-end-column="96" />
+        <state relative-caret-position="280">
+          <caret line="795" column="13" selection-start-line="795" selection-start-column="13" selection-end-line="795" selection-end-column="13" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lantern/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1526">
-          <caret line="178" column="11" lean-forward="true" selection-start-line="178" selection-start-column="11" selection-end-line="178" selection-end-column="11" />
-          <folding>
-            <element signature="e#308#317#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -790,10 +738,113 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/media/xlsx/detail/.gitkeep">
+    <entry file="file://$USER_HOME$/.PyCharm2018.1/system/python_stubs/-1077505309/builtins.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        <state relative-caret-position="231">
+          <caret line="2528" column="6" selection-start-line="2528" selection-start-column="6" selection-end-line="2528" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/db/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="15" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/core/management/commands/dbshell.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="20">
+          <caret line="1" column="46" lean-forward="true" selection-start-line="1" selection-start-column="46" selection-end-line="1" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/core/management/commands/dumpdata.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1140">
+          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/core/management/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="365">
+          <caret line="275" column="6" selection-start-line="275" selection-start-column="6" selection-end-line="275" selection-end-column="6" />
+          <folding>
+            <element signature="e#135#144#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/contrib/admin/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="372">
+          <caret line="40" column="3" selection-start-line="40" selection-start-column="3" selection-end-line="40" selection-end-column="3" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/contrib/contenttypes/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2520">
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lantern/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="40" column="34" selection-start-line="40" selection-start-column="34" selection-end-line="40" selection-end-column="34" />
+          <folding>
+            <element signature="e#308#317#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tft/models/lot.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/db/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="8" column="53" lean-forward="true" selection-start-line="8" selection-start-column="53" selection-end-line="8" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/core/management/commands/migrate.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2520">
+          <caret line="18" column="23" selection-start-line="18" selection-start-column="23" selection-end-line="18" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.pyenv/versions/lantern/lib/python3.7/site-packages/django/core/management/commands/flush.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-490">
+          <caret line="22" column="71" selection-start-line="22" selection-start-column="71" selection-end-line="22" selection-end-column="71" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/account/management/commands/backup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1086">
+          <caret line="89" column="30" selection-start-line="89" selection-start-column="30" selection-end-line="89" selection-end-column="30" />
+          <folding>
+            <element signature="e#40#83#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

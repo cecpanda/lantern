@@ -784,14 +784,16 @@ class OrderViewSet(ListModelMixin,
             r_rejects_list = []
             r_closed_list = []
             finished_list = []
+
+            for order in queryset:
+                groups.add(order.charge_group)
+
             data = {
-                'groups': [group.name for group in Group.objects.all()],
+                'groups': [group.name for group in groups],
                 'table': [],
                 'bar': [],
                 'pie': []
             }
-            for order in queryset:
-                groups.add(order.charge_group)
 
             for group in groups:
                 sum = queryset.filter(charge_group=group).count()
@@ -839,7 +841,7 @@ class OrderViewSet(ListModelMixin,
             data['bar'].append({'name': '复机拒签', 'type': 'bar', 'stack': 'a', 'data': r_rejects_list})
             data['bar'].append({'name': '部分复机完成', 'type': 'bar', 'stack': 'a', 'data': r_closed_list})
             data['bar'].append({'name': '全部复机完成', 'type': 'bar', 'stack': 'a', 'data': finished_list})
-
+            print(data)
             return Response(data=data)
 
         elif format == 'csv':
