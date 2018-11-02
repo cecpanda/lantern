@@ -457,7 +457,7 @@ class ShortcutViewSet(ListModelMixin, GenericViewSet):
     serializer_class = ShortcutSerializer
 
 
-class OrderViewSet(CacheResponseMixin, ListModelMixin,
+class OrderViewSet(ListModelMixin,
                    RetrieveModelMixin,
                    GenericViewSet):
     queryset = Order.objects.prefetch_related('recoverorders', 'recoverorders__audit', 'reports', 'remarks')
@@ -946,14 +946,14 @@ class OrderViewSet(CacheResponseMixin, ListModelMixin,
                     item['最新批注'] = None
 
                 audit = row.get('startaudit')
-                item['生产领班签核'] = audit.get('p_signer').get('username')
+                item['生产领班签核'] = audit.get('p_signer').get('realname')
                 if audit.get('p_time'):
                     item['生产签字时间'] = datetime.fromisoformat(audit.get('p_time')).strftime('%Y/%m/%d %H:%M:%S')
                 else:
                     item['生产签字时间'] = None
                 item['Recipe关闭人员'] = audit.get('recipe_close')
                 item['Recipe确认人员'] = audit.get('recipe_confirm')
-                item['责任工程签字'] = audit.get('c_signer').get('username')
+                item['责任工程签字'] = audit.get('c_signer').get('realname')
                 if audit.get('c_time'):
                     item['工程签字时间'] = datetime.fromisoformat(audit.get('c_time')).strftime('%Y/%m/%d %H:%M:%S')
                 else:
@@ -992,12 +992,12 @@ class OrderViewSet(CacheResponseMixin, ListModelMixin,
                     item[f'部分复机站点{i}'] = r.get('step')
 
                     r_audit = r.get('audit')
-                    item[f'工程品质签复{i}'] = r_audit.get('qc_signer').get('username')
+                    item[f'工程品质签复{i}'] = r_audit.get('qc_signer').get('realname')
                     if r_audit.get('qc_time'):
                         item['品质签复时间{i}'] = datetime.fromisoformat(r_audit.get('qc_time')).strftime('%Y/%m/%d %H:%M:%S')
                     else:
                         item['品质签复时间{i}'] = None
-                    item[f'生产领班签复{i}'] = r_audit.get('p_signer').get('username')
+                    item[f'生产领班签复{i}'] = r_audit.get('p_signer').get('realname')
                     if r_audit.get('p_time'):
                         item['生产签复时间{i}'] = datetime.fromisoformat(r_audit.get('p_time')).strftime('%Y/%m/%d %H:%M:%S')
                     else:
@@ -1094,7 +1094,7 @@ class OrderViewSet(CacheResponseMixin, ListModelMixin,
             sheet1.write('B4', '开单工程', fmt)
             sheet1.write('C4', data.get('group').get('name'), fmt)
             sheet1.write('D4', '开单人员', fmt)
-            sheet1.write('E4', data.get('user').get('username'), fmt)
+            sheet1.write('E4', data.get('user').get('realname'), fmt)
             sheet1.write('F4', '开单时间', fmt)
             sheet1.write('G4', datetime.fromisoformat(data.get('created')).strftime('%Y/%m/%d %H:%M:%S'), fmt)
 
@@ -1167,9 +1167,9 @@ class OrderViewSet(CacheResponseMixin, ListModelMixin,
             sheet1.merge_range('F15:G15', audit.get('recipe_confirm'), fmt)
 
             sheet1.write('B16', '责任工程签字', fmt)
-            sheet1.merge_range('C16:D16', audit.get('c_signer').get('username'), fmt)
+            sheet1.merge_range('C16:D16', audit.get('c_signer').get('realname'), fmt)
             sheet1.write('E16', '生产领班签核', fmt)
-            sheet1.merge_range('F16:G16', audit.get('p_signer').get('username'), fmt)
+            sheet1.merge_range('F16:G16', audit.get('p_signer').get('realname'), fmt)
 
             sheet1.write('B17', '工程签字时间', fmt)
             if audit.get('c_time'):
@@ -1185,7 +1185,7 @@ class OrderViewSet(CacheResponseMixin, ListModelMixin,
                 sheet1.merge_range(row, 1, row, 6, f'设备品质异常复机单 {index}，id：{r.get("id")}' , h1_fmt)
 
                 sheet1.write(row + 1, 1, '申请复机人员', fmt)
-                sheet1.merge_range(row + 1, 2, row + 1, 3, r.get('user').get('username'), fmt)
+                sheet1.merge_range(row + 1, 2, row + 1, 3, r.get('user').get('realname'), fmt)
                 sheet1.write(row + 1, 4, '申请时间', fmt)
                 if r.get('created'):
                     sheet1.merge_range(row + 1, 5, row + 1, 6, datetime.fromisoformat(r.get('created')).strftime('%Y/%m/%d %H:%M:%S'), fmt)
@@ -1215,9 +1215,9 @@ class OrderViewSet(CacheResponseMixin, ListModelMixin,
                 sheet1.merge_range(row + 7, 1, row + 7, 6, '复机签核', h3_fmt)
 
                 sheet1.write(row + 8, 1, '工程品质签字', fmt)
-                sheet1.merge_range(row + 8, 2, row + 8, 3, r_audit.get('qc_signer').get('username'), fmt)
+                sheet1.merge_range(row + 8, 2, row + 8, 3, r_audit.get('qc_signer').get('realname'), fmt)
                 sheet1.write(row + 8, 4, '生产领班签复', fmt)
-                sheet1.merge_range(row + 8, 5, row + 8, 6, r_audit.get('p_signer').get('username'), fmt)
+                sheet1.merge_range(row + 8, 5, row + 8, 6, r_audit.get('p_signer').get('realname'), fmt)
 
                 sheet1.write(row + 9, 1, '品质签复时间', fmt)
                 if r_audit.get('qc_time'):
