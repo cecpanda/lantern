@@ -841,7 +841,6 @@ class OrderViewSet(ListModelMixin,
             data['bar'].append({'name': '复机拒签', 'type': 'bar', 'stack': 'a', 'data': r_rejects_list})
             data['bar'].append({'name': '部分复机完成', 'type': 'bar', 'stack': 'a', 'data': r_closed_list})
             data['bar'].append({'name': '全部复机完成', 'type': 'bar', 'stack': 'a', 'data': finished_list})
-            print(data)
             return Response(data=data)
 
         elif format == 'csv':

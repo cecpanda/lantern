@@ -6,9 +6,7 @@ from django.apps import apps as django_apps
 from django.db import connections, transaction
 from django.db.utils import ConnectionDoesNotExist, OperationalError
 from django.core.management.base import BaseCommand, CommandError
-from django.core.management.commands import migrate, flush
-
-from tft.models import ID
+from django.core.management import call_command
 
 
 class Command(BaseCommand):
@@ -38,25 +36,38 @@ class Command(BaseCommand):
             raise CommandError(f'Database {db} connecting failed: {e}.')
 
         # 同步并清空 备份数据库
-        argv = ['manage.py', 'migrate', '--database', db]
-        migrate.Command().run_from_argv(argv)
-        flush.Command().run_from_argv(argv)
+        call_command('migrate', database=db)
+
+        confirm = input(self.style.WARNING(f'Are you sure to trancate the database {db}? (y/n)'))
+        if confirm == 'y':
+            call_command('flush', database=db, interactive=False)
+            self.stdout.write(self.style.SUCCESS(f'Database {db} had been trancated!'))
+        else:
+            exit('Backup cancled, bye...')
 
         # 将 default 数据库中的数据库写入 backup
         all_models = django_apps.all_models
 
         # contenttypes
-        for model in all_models['contenttypes'].values():
-            self.backup(model=model, db=db)
+        # migrate 的时候自动就添加数据了,
+        # flush 的时候清空原来的，又创建新数据，所以主键改变了
+        self.backup(model=all_models['contenttypes']['contenttype'], db=db)
 
         # auth - User
+        # permission migrate 的时候自动添加了内容
+        # flush 的时候清空原来的，又创建新数据，所以主键改变了
         self.backup(model=all_models['auth']['permission'], db=db)
-        self.backup(model=all_models['auth']['group_permissions'], db=db)
         self.backup(model=all_models['auth']['group'], db=db)
+        self.backup(model=all_models['auth']['group_permissions'], db=db)
+        # self.backup(model=all_models['auth']['user'], db=db)
 
         # account
-        for model in all_models['account'].values():
-            self.backup(model=model, db=db)
+        # 顺序
+        self.backup(model=all_models['account']['user'], db=db)
+        self.backup(model=all_models['account']['user_groups'], db=db)
+        self.backup(model=all_models['account']['user_user_permissions'], db=db)
+        self.backup(model=all_models['account']['follow'], db=db)
+        self.backup(model=all_models['account']['groupsetting'], db=db)
 
         # sessiongs
         for model in all_models['sessions'].values():
@@ -78,20 +89,22 @@ class Command(BaseCommand):
         for model in all_models['tft'].values():
             self.backup(model=model, db=db)
 
-        self.stdout.write('Backup Finished!')
+        self.stdout.write(self.style.SUCCESS('Backup Finished!'))
 
 
     def backup(self, model=None, db=None):
+        # 自动添加的时间无效了
+        # 接下来的主键 ID 不是想要的结果
         if db is None:
-            return
-        # try:
-        with transaction.atomic(using=db):
-            querysets = model.objects.using('default').all()
-            # for SQLite where the default is such that at most 999 variables per query are used.
-            for queryset in querysets:
-                queryset.save()
-        # except Exception as e:
-        #     transaction.rollback(using=db)
-        #     self.stderr.write(f'Something happened, transaction rollbak: {e}.')
-        # else:
-        #     self.stdout.write(f'{str(model)} finished...')
+            exit(self.style.ERROR('Please confirm the db parameter'))
+        try:
+            with transaction.atomic(using=db):
+                querysets = model.objects.using('default').all()
+                model.objects.using(db).delete()  # 因为默认生成的数据主键变了
+                # for SQLite where the default is such that at most 999 variables per query are used.
+                model.objects.using(db).bulk_create(querysets)
+        except Exception as e:
+            transaction.rollback(using=db)
+            self.stderr.write(self.style.ERROR(f'Something happened, transaction rollbak: {e}.'))
+        else:
+            self.stdout.write(self.style.SQL_TABLE(f'{model._meta.verbose_name} finished...'))
