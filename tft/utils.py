@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.conf import settings
+from django.contrib.auth.models import Group
 from rest_framework import status
 from rest_framework.permissions import BasePermission
 from rest_framework.exceptions import APIException
@@ -18,13 +19,38 @@ class OrderPagination(PageNumberPagination):
 
 
 class OrderFilter(filters.FilterSet):
+    STATUS_CHOICES = (
+        ('1', '（停机）待生产签核'),
+        ('2', '（停机）待责任工程签核'),
+        ('3', '（停机）拒签'),
+        ('4', '（停机）完成'),
+        ('5', '（复机）待QC签核'),
+        ('6', '（复机）待生产签核'),
+        ('7', '（复机）拒签'),
+        ('8', '（部分复机）完成'),
+        ('9', '（复机）完成')
+    )
+    GROUP_CHOICES = (
+        ('MFG', 'MFG'),
+        ('PVD', 'PVD'),
+        ('CVD', 'CVD'),
+        ('PHO', 'PHO'),
+        ('DRY', 'DRY'),
+        ('WET', 'WET'),
+        ('TEST', 'TEST'),
+        ('QC', 'QC'),
+    )
     username = filters.CharFilter(field_name='user__username', lookup_expr='iexact')
     realname = filters.CharFilter(field_name='user__realname', lookup_expr='iexact')
     mod_user = filters.CharFilter(field_name='mod_user__username', lookup_expr='iexact')
-    group = filters.CharFilter(field_name='group__name', lookup_expr='iexact')
-    charge_group = filters.CharFilter(field_name='charge_group__name', lookup_expr='iexact')
+    status = filters.MultipleChoiceFilter(field_name='status', lookup_expr='iexact', choices=STATUS_CHOICES)
+    # group = filters.CharFilter(field_name='group__name', lookup_expr='iexact')
+    group = filters.MultipleChoiceFilter(field_name='group__name', choices=GROUP_CHOICES)
+    # charge_group = filters.CharFilter(field_name='charge_group__name', lookup_expr='iexact')
+    charge_group = filters.MultipleChoiceFilter(field_name='charge_group__name', choices=GROUP_CHOICES)
     created_after = filters.IsoDateTimeFilter(field_name='created', lookup_expr='gte')
     created_before = filters.IsoDateTimeFilter(field_name='created', lookup_expr='lte')
+    eq = filters.CharFilter(field_name='eq', lookup_expr='icontains')
     # created = filters.DateTimeFromToRangeFilter(field_name='created')
     name = filters.CharFilter(method='name_filter', label='申请人或修改人')
     r_name = filters.CharFilter(method='r_name_filter', label='复机单的申请人或修改人')
@@ -35,7 +61,7 @@ class OrderFilter(filters.FilterSet):
 
     class Meta:
         model = Order
-        fields = ('username', 'realname', 'mod_user', 'status', 'group', 'charge_group')
+        fields = ('username', 'realname', 'mod_user', 'status', 'group', 'charge_group', 'eq')
 
     def name_filter(self, queryset, name, value):
         return queryset.filter(Q(user__username=value) | Q(mod_user__username=value))
